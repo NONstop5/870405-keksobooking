@@ -20,6 +20,7 @@ var shuffleArray = function (array) {
   return array;
 };
 
+// Функция создает массив объектов объявлений
 var createAds = function () {
   var titles = [
     'Большая уютная квартира',
@@ -76,7 +77,7 @@ var createAds = function () {
         photos: shuffleArray(photos) // массив из строк ... расположенных в произвольном порядке
       },
       location: {
-        x: getRandomValueRange(1, 10), // случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка.
+        x: getRandomValueRange(1, 1000), // случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка.
         y: getRandomValueRange(130, 630) // случайное число, координата y метки на карте от 130 до 630.
       }
     };
@@ -86,4 +87,33 @@ var createAds = function () {
   return result;
 };
 
+// Функция создает метку объявления
+var createMapPinElement = function (mapPinTemplate, adObj) {
+  var mapPinElem = mapPinTemplate.cloneNode(true);
+  var pinImg = mapPinElem.querySelector('img');
+
+  mapPinElem.style = 'left: ' + adObj.location.x + 'px; top: ' + adObj.location.y + 'px;';
+  pinImg.src = adObj.author.avatar;
+  pinImg.alt = adObj.offer.title;
+
+  return mapPinElem;
+};
+
+// Функция содает метки объявлений на карте
+var generateMapPins = function () {
+  var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
+  var mapPinsFragment = document.createDocumentFragment();
+
+  ads.forEach(function (adObj) {
+    var mapPinElement = createMapPinElement(mapPinTemplate, adObj);
+    mapPinsFragment.appendChild(mapPinElement);
+  });
+
+  mapPinsElem.appendChild(mapPinsFragment);
+};
+
+var mapPinsElem = document.querySelector('.map__pins');
+
 var ads = createAds();
+
+generateMapPins();
