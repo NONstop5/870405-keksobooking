@@ -128,33 +128,32 @@ var generateMapPins = function (adsArray) {
   mapPinsElem.appendChild(mapPinsFragment);
 };
 
-var generateOfferFeatures = function (offerFeatures, mapCardFragment, adObj) {
-  offerFeatures.innerHTML = '';
-  adObj.offer.features.forEach(function (value) {
+var generateOfferFeatures = function (futuresArray) {
+  var futureFragment = document.createDocumentFragment();
+  futuresArray.forEach(function (value) {
     var futureElem = createNewElement('li', 'popup__feature', '');
     futureElem.classList.add('popup__feature--' + value);
-    mapCardFragment.appendChild(futureElem);
+    futureFragment.appendChild(futureElem);
   });
-  offerFeatures.appendChild(mapCardFragment);
+  return futureFragment;
 };
 
-var generateOfferPhotos = function (offerPhotos, mapCardFragment, adObj) {
-  offerPhotos.innerHTML = '';
-  adObj.offer.photos.forEach(function (value) {
+var generateOfferPhotos = function (photosArray) {
+  var photoFragment = document.createDocumentFragment();
+  photosArray.forEach(function (value) {
     var photoElem = createNewElement('img', 'popup__photo', '');
     photoElem.src = value;
     photoElem.width = 45;
     photoElem.height = 40;
     photoElem.alt = 'Фотография жилья';
-    mapCardFragment.appendChild(photoElem);
+    photoFragment.appendChild(photoElem);
   });
-  offerPhotos.appendChild(mapCardFragment);
+  return photoFragment;
 };
 
 var createPopupCard = function (adObj) {
   var mapCardTemplate = document.querySelector('#card').content.querySelector('article');
   var mapCardElem = mapCardTemplate.cloneNode(true);
-  var mapCardFragment = document.createDocumentFragment();
 
   var mapFiltersContainer = map.querySelector('.map__filters-container');
   var avatarImg = mapCardElem.querySelector('img');
@@ -176,11 +175,13 @@ var createPopupCard = function (adObj) {
   offerCapacity.textContent = adObj.offer.rooms + ' комнаты для ' + adObj.offer.guests + ' гостей';
   offerTime.textContent = 'Заезд после ' + adObj.offer.checkin + ', выезд до ' + adObj.offer.checkout;
 
-  generateOfferFeatures(offerFeatures, mapCardFragment, adObj);
+  offerFeatures.innerHTML = '';
+  offerFeatures.appendChild(generateOfferFeatures(adObj.offer.features));
 
   offerDesc.textContent = adObj.offer.description;
 
-  generateOfferPhotos(offerPhotos, mapCardFragment, adObj);
+  offerPhotos.innerHTML = '';
+  offerPhotos.appendChild(generateOfferPhotos(adObj.offer.photos));
 
   map.insertBefore(mapCardElem, mapFiltersContainer);
 };
