@@ -58,14 +58,22 @@ var createAds = function () {
   ];
   var result = [];
 
+  var pinArrowStartCordsX = 0;
+  var pinArrowEndCordsX = map.clientWidth - 50;
+  var pinArrowStartCordsY = 130 - 35;
+  var pinArrowEndCordsY = 630;
+
+
   for (var i = 0; i < 8; i++) {
+    var locationPinX = getRandomValueRange(pinArrowStartCordsX, pinArrowEndCordsX);
+    var locationPinY = getRandomValueRange(pinArrowStartCordsY, pinArrowEndCordsY);
     var ad = {
       author: {
         avatar: AVATAR_PATH + 'user0' + (i + 1) + AVATAR_EXTENSION // строка, адрес изображения вида img/avatars/user{{xx}}.png, где {{xx}} это число от 1 до 8 с ведущим нулём. Например, 01, 02 и т. д. Адреса изображений не повторяются
       },
       offer: {
         title: titles[i], // строка, заголовок предложения, одно из фиксированных значений. Значения не должны повторяться.
-        address: getRandomValueRange(0, 1000) + ', ' + getRandomValueRange(0, 1000), // строка, адрес предложения, представляет собой запись вида "{{location.x}}, {{location.y}}", например, "600, 350"
+        address: locationPinX + ', ' + locationPinY, // строка, адрес предложения, представляет собой запись вида "{{location.x}}, {{location.y}}", например, "600, 350"
         price: getRandomValueRange(1000, 1000000), // число, случайная цена от 1000 до 1000000
         type: types[getRandomValueRange(0, 3)], // строка с одним из четырёх фиксированных значений:
         rooms: getRandomValueRange(1, 5), // число, случайное количество комнат от 1 до 5
@@ -77,8 +85,8 @@ var createAds = function () {
         photos: shuffleArray(photos) // массив из строк ... расположенных в произвольном порядке
       },
       location: {
-        x: getRandomValueRange(1, 1000), // случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка.
-        y: getRandomValueRange(130, 630) // случайное число, координата y метки на карте от 130 до 630.
+        x: locationPinX, // случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка.
+        y: locationPinY // случайное число, координата y метки на карте от 130 до 630.
       }
     };
     result.push(ad);
@@ -88,7 +96,7 @@ var createAds = function () {
 };
 
 // Функция создает метку объявления
-var createMapPinElement = function (mapPinTemplate, adObj) {
+var createMapPinElement = function (adObj) {
   var mapPinElem = mapPinTemplate.cloneNode(true);
   var pinImg = mapPinElem.querySelector('img');
 
@@ -101,19 +109,45 @@ var createMapPinElement = function (mapPinTemplate, adObj) {
 
 // Функция содает метки объявлений на карте
 var generateMapPins = function () {
-  var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
   var mapPinsFragment = document.createDocumentFragment();
 
   ads.forEach(function (adObj) {
-    var mapPinElement = createMapPinElement(mapPinTemplate, adObj);
+    var mapPinElement = createMapPinElement(adObj);
     mapPinsFragment.appendChild(mapPinElement);
   });
 
   mapPinsElem.appendChild(mapPinsFragment);
 };
 
+var createPopupCard = function (adObj) {
+  var mapCardTemplate = document.querySelector('#card').content.querySelector('article');
+  var mapCardElem = mapCardTemplate.cloneNode(true);
+
+  var mapFiltersContainer = map.querySelector('.map__filters-container');
+  var avatarImg = mapCardElem.querySelector('img');
+  var offerTitle = mapCardElem.querySelector('.popup__title');
+  var offerAddress = mapCardElem.querySelector('.popup__text--address');
+  var offerPrice = mapCardElem.querySelector('.popup__text--price');
+  var offerType = mapCardElem.querySelector('.popup__type');
+  var offerCapacity = mapCardElem.querySelector('.popup__text--capacity');
+  var offerTime = mapCardElem.querySelector('.popup__text--time');
+  var offerFeatures = mapCardElem.querySelector('.popup__features');
+  var offerDesc = mapCardElem.querySelector('.popup__description');
+  var offerPhotos = mapCardElem.querySelector('.popup__photos');
+
+  avatarImg.src = adObj.author.avatar;
+  offerTitle.textContent = adObj.offer.title;
+  offerAddress.textContent = adObj.offer.address;
+  offerPrice.innerHTML = adObj.offer.price + '&#x20bd;<span>/ночь</span>';
+
+  map.insertBefore(mapCardElem, mapFiltersContainer);
+};
+
 var mapPinsElem = document.querySelector('.map__pins');
+var map = document.querySelector('.map');
+var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
 
 var ads = createAds();
 
 generateMapPins();
+createPopupCard(ads[0]);
