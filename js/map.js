@@ -117,15 +117,38 @@ var createMapPinElement = function (adObj) {
 };
 
 // Функция содает метки объявлений на карте
-var generateMapPins = function () {
+var generateMapPins = function (adsArray) {
   var mapPinsFragment = document.createDocumentFragment();
 
-  ads.forEach(function (adObj) {
+  adsArray.forEach(function (adObj) {
     var mapPinElement = createMapPinElement(adObj);
     mapPinsFragment.appendChild(mapPinElement);
   });
 
   mapPinsElem.appendChild(mapPinsFragment);
+};
+
+var generateOfferFeatures = function (offerFeatures, mapCardFragment, adObj) {
+  offerFeatures.innerHTML = '';
+  adObj.offer.features.forEach(function (value) {
+    var futureElem = createNewElement('li', 'popup__feature', '');
+    futureElem.classList.add('popup__feature--' + value);
+    mapCardFragment.appendChild(futureElem);
+  });
+  offerFeatures.appendChild(mapCardFragment);
+};
+
+var generateOfferPhotos = function (offerPhotos, mapCardFragment, adObj) {
+  offerPhotos.innerHTML = '';
+  adObj.offer.photos.forEach(function (value) {
+    var photoElem = createNewElement('img', 'popup__photo', '');
+    photoElem.src = value;
+    photoElem.width = 45;
+    photoElem.height = 40;
+    photoElem.alt = 'Фотография жилья';
+    mapCardFragment.appendChild(photoElem);
+  });
+  offerPhotos.appendChild(mapCardFragment);
 };
 
 var createPopupCard = function (adObj) {
@@ -144,12 +167,6 @@ var createPopupCard = function (adObj) {
   var offerFeatures = mapCardElem.querySelector('.popup__features');
   var offerDesc = mapCardElem.querySelector('.popup__description');
   var offerPhotos = mapCardElem.querySelector('.popup__photos');
-  var offerTypeRusValues = {
-    palace: 'Дворец',
-    flat: 'Квартира',
-    house: 'Дом',
-    bungalo: 'Бунгало'
-  };
 
   avatarImg.src = adObj.author.avatar;
   offerTitle.textContent = adObj.offer.title;
@@ -159,26 +176,11 @@ var createPopupCard = function (adObj) {
   offerCapacity.textContent = adObj.offer.rooms + ' комнаты для ' + adObj.offer.guests + ' гостей';
   offerTime.textContent = 'Заезд после ' + adObj.offer.checkin + ', выезд до ' + adObj.offer.checkout;
 
-  offerFeatures.innerHTML = '';
-  adObj.offer.features.forEach(function (value) {
-    var futureElem = createNewElement('li', 'popup__feature', '');
-    futureElem.classList.add('popup__feature--' + value);
-    mapCardFragment.appendChild(futureElem);
-  });
-  offerFeatures.appendChild(mapCardFragment);
+  generateOfferFeatures(offerFeatures, mapCardFragment, adObj);
 
   offerDesc.textContent = adObj.offer.description;
 
-  offerPhotos.innerHTML = '';
-  adObj.offer.photos.forEach(function (value) {
-    var photoElem = createNewElement('img', 'popup__photo', '');
-    photoElem.src = value;
-    photoElem.width = 45;
-    photoElem.height = 40;
-    photoElem.alt = 'Фотография жилья';
-    mapCardFragment.appendChild(photoElem);
-  });
-  offerPhotos.appendChild(mapCardFragment);
+  generateOfferPhotos(offerPhotos, mapCardFragment, adObj);
 
   map.insertBefore(mapCardElem, mapFiltersContainer);
 };
@@ -186,8 +188,14 @@ var createPopupCard = function (adObj) {
 var mapPinsElem = document.querySelector('.map__pins');
 var map = document.querySelector('.map');
 var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
+var offerTypeRusValues = {
+  palace: 'Дворец',
+  flat: 'Квартира',
+  house: 'Дом',
+  bungalo: 'Бунгало'
+};
 
 var ads = createAds();
 
-generateMapPins();
+generateMapPins(ads);
 createPopupCard(ads[0]);
