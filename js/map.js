@@ -77,6 +77,7 @@ var createAds = function () {
     var locationPinX = getRandomValueRange(pinArrowStartCordsX, pinArrowEndCordsX);
     var locationPinY = getRandomValueRange(pinArrowStartCordsY, pinArrowEndCordsY);
     var ad = {
+      id: i,
       author: {
         avatar: AVATAR_PATH + 'user0' + (i + 1) + AVATAR_EXTENSION // строка, адрес изображения вида img/avatars/user{{xx}}.png, где {{xx}} это число от 1 до 8 с ведущим нулём. Например, 01, 02 и т. д. Адреса изображений не повторяются
       },
@@ -110,6 +111,7 @@ var createMapPinElement = function (adObj) {
   var pinImg = mapPinElem.querySelector('img');
 
   mapPinElem.style = 'left: ' + adObj.location.x + 'px; top: ' + adObj.location.y + 'px;';
+  mapPinElem.setAttribute('id', adObj.id);
   pinImg.src = adObj.author.avatar;
   pinImg.alt = adObj.offer.title;
 
@@ -212,10 +214,10 @@ var setAvailableFormFields = function (flag) {
   }
 };
 
-// Функция удаляет класс неактивности у формы
-var removeAdFormDisabledClass = function () {
-  var adFormElem = document.querySelector('.ad-form');
-  adFormElem.classList.remove('ad-form--disabled');
+// Функция заполняет поле адреса кординатами пина
+var setAddressFieldValue = function (pinCords) {
+  var adressFieldElem = adFormElem.querySelector('#address');
+  adressFieldElem.value = pinCords;
 };
 
 setAvailableFormFields(false);
@@ -223,6 +225,7 @@ setAvailableFormFields(false);
 var mapPinsElem = document.querySelector('.map__pins');
 var mapPinMain = mapPinsElem.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
+var adFormElem = document.querySelector('.ad-form');
 var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
 var offerTypeRusValues = {
   palace: 'Дворец',
@@ -233,10 +236,14 @@ var offerTypeRusValues = {
 
 var ads = createAds();
 
-mapPinMain.addEventListener('mouseup', function () {
+mapPinMain.addEventListener('mouseup', function (evt) {
+  var leftCords = evt.target.style['left'];
+  var topCords = evt.target.style['top'];
+  var pinCords = leftCords.slice(0, leftCords.length - 2) + ', ' + topCords.slice(0, leftCords.length - 2);
   generateMapPins(ads);
   createPopupCard(ads[0]);
   setAvailableFormFields(true);
+  setAddressFieldValue(pinCords);
   map.classList.remove('map--faded');
-  removeAdFormDisabledClass();
+  adFormElem.classList.remove('ad-form--disabled');
 });
