@@ -20,7 +20,7 @@ var shuffleArray = function (array) {
   return array;
 };
 
-// Функция создания нового элемента
+// Функция создает новый элемент
 var createNewElement = function (tagName, className, textContent) {
   var newElement = document.createElement(tagName);
   newElement.classList.add(className);
@@ -128,7 +128,8 @@ var generateMapPins = function (adsArray) {
   mapPinsElem.appendChild(mapPinsFragment);
 };
 
-var generateOfferFeatures = function (futuresArray) {
+// Функция содает список фич в объявлении
+var generateOfferFeaturesElem = function (futuresArray) {
   var futureFragment = document.createDocumentFragment();
   futuresArray.forEach(function (value) {
     var futureElem = createNewElement('li', 'popup__feature', '');
@@ -138,7 +139,8 @@ var generateOfferFeatures = function (futuresArray) {
   return futureFragment;
 };
 
-var generateOfferPhotos = function (photosArray) {
+// Функция содает список фото в объявлении
+var generateOfferPhotosElem = function (photosArray) {
   var photoFragment = document.createDocumentFragment();
   photosArray.forEach(function (value) {
     var photoElem = createNewElement('img', 'popup__photo', '');
@@ -151,6 +153,7 @@ var generateOfferPhotos = function (photosArray) {
   return photoFragment;
 };
 
+// Функция содает список фич в объявлении
 var createPopupCard = function (adObj) {
   var mapCardTemplate = document.querySelector('#card').content.querySelector('article');
   var mapCardElem = mapCardTemplate.cloneNode(true);
@@ -176,12 +179,12 @@ var createPopupCard = function (adObj) {
   offerTime.textContent = 'Заезд после ' + adObj.offer.checkin + ', выезд до ' + adObj.offer.checkout;
 
   offerFeatures.innerHTML = '';
-  offerFeatures.appendChild(generateOfferFeatures(adObj.offer.features));
+  offerFeatures.appendChild(generateOfferFeaturesElem(adObj.offer.features));
 
   offerDesc.textContent = adObj.offer.description;
 
   offerPhotos.innerHTML = '';
-  offerPhotos.appendChild(generateOfferPhotos(adObj.offer.photos));
+  offerPhotos.appendChild(generateOfferPhotosElem(adObj.offer.photos));
 
   map.insertBefore(mapCardElem, mapFiltersContainer);
 };
