@@ -193,6 +193,7 @@ var createPopupCard = function (adObj) {
 var setAvailableFormFields = function (flag) {
   var formTags = document.querySelectorAll('form');
   for (var i = 0; i < formTags.length; i++) {
+    var SelectTags = formTags[i].querySelectorAll('select');
     var fieldSetTags = formTags[i].querySelectorAll('fieldset');
     for (var n = 0; n < fieldSetTags.length; n++) {
       if (flag) {
@@ -201,12 +202,26 @@ var setAvailableFormFields = function (flag) {
         fieldSetTags[n].setAttribute('disabled', '');
       }
     }
+    for (var k = 0; k < SelectTags.length; k++) {
+      if (flag) {
+        SelectTags[k].removeAttribute('disabled');
+      } else {
+        SelectTags[k].setAttribute('disabled', '');
+      }
+    }
   }
 };
 
+// Функция удаляет класс неактивности у формы
+var removeAdFormDisabledClass = function () {
+  var adFormElem = document.querySelector('.ad-form');
+  adFormElem.classList.remove('ad-form--disabled');
+};
+
 setAvailableFormFields(false);
-/*
+
 var mapPinsElem = document.querySelector('.map__pins');
+var mapPinMain = mapPinsElem.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
 var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
 var offerTypeRusValues = {
@@ -218,6 +233,10 @@ var offerTypeRusValues = {
 
 var ads = createAds();
 
-generateMapPins(ads);
-createPopupCard(ads[0]);
-*/
+mapPinMain.addEventListener('mouseup', function () {
+  generateMapPins(ads);
+  createPopupCard(ads[0]);
+  setAvailableFormFields(true);
+  map.classList.remove('map--faded');
+  removeAdFormDisabledClass();
+});
