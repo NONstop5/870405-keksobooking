@@ -205,7 +205,7 @@ var setAvailableFormFields = function (flag) {
 };
 
 setAvailableFormFields(false);
-
+/*
 var mapPinsElem = document.querySelector('.map__pins');
 var map = document.querySelector('.map');
 var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
@@ -220,3 +220,4 @@ var ads = createAds();
 
 generateMapPins(ads);
 createPopupCard(ads[0]);
+*/
