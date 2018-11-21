@@ -189,6 +189,23 @@ var createPopupCard = function (adObj) {
   map.insertBefore(mapCardElem, mapFiltersContainer);
 };
 
+// Функция устанавливает доступность полей форм
+var setAvailableFormFields = function (flag) {
+  var formTags = document.querySelectorAll('form');
+  for (var i = 0; i < formTags.length; i++) {
+    var fieldSetTags = formTags[i].querySelectorAll('fieldset');
+    for (var n = 0; n < fieldSetTags.length; n++) {
+      if (flag) {
+        fieldSetTags[n].removeAttribute('disabled');
+      } else {
+        fieldSetTags[n].setAttribute('disabled', '');
+      }
+    }
+  }
+};
+
+setAvailableFormFields(false);
+
 var mapPinsElem = document.querySelector('.map__pins');
 var map = document.querySelector('.map');
 var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
