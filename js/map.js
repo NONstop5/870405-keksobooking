@@ -220,6 +220,21 @@ var setAddressFieldValue = function (pinCords) {
   adressFieldElem.value = pinCords;
 };
 
+// Навешиваем события на главный пин
+var addMainPinEvent = function () {
+  mapPinMain.addEventListener('mouseup', function (evt) {
+    var leftCords = evt.target.style['left'];
+    var topCords = evt.target.style['top'];
+    var pinCords = leftCords.slice(0, leftCords.length - 2) + ', ' + topCords.slice(0, leftCords.length - 2);
+    generateMapPins(ads);
+    createPopupCard(ads[0]);
+    setAvailableFormFields(true);
+    setAddressFieldValue(pinCords);
+    map.classList.remove('map--faded');
+    adFormElem.classList.remove('ad-form--disabled');
+  });
+};
+
 setAvailableFormFields(false);
 
 var mapPinsElem = document.querySelector('.map__pins');
@@ -236,14 +251,4 @@ var offerTypeRusValues = {
 
 var ads = createAds();
 
-mapPinMain.addEventListener('mouseup', function (evt) {
-  var leftCords = evt.target.style['left'];
-  var topCords = evt.target.style['top'];
-  var pinCords = leftCords.slice(0, leftCords.length - 2) + ', ' + topCords.slice(0, leftCords.length - 2);
-  generateMapPins(ads);
-  createPopupCard(ads[0]);
-  setAvailableFormFields(true);
-  setAddressFieldValue(pinCords);
-  map.classList.remove('map--faded');
-  adFormElem.classList.remove('ad-form--disabled');
-});
+addMainPinEvent();
