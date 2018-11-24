@@ -192,24 +192,16 @@ var createPopupCard = function (adObj) {
 };
 
 // Функция устанавливает доступность полей форм
-var setAvailableFormFields = function (flag) {
+var setAvailableFormFields = function (disabled) {
   var formTags = document.querySelectorAll('form');
   for (var i = 0; i < formTags.length; i++) {
     var SelectTags = formTags[i].querySelectorAll('select');
     var fieldSetTags = formTags[i].querySelectorAll('fieldset');
     for (var n = 0; n < fieldSetTags.length; n++) {
-      if (flag) {
-        fieldSetTags[n].removeAttribute('disabled');
-      } else {
-        fieldSetTags[n].setAttribute('disabled', '');
-      }
+      fieldSetTags[n].disabled = disabled;
     }
     for (var k = 0; k < SelectTags.length; k++) {
-      if (flag) {
-        SelectTags[k].removeAttribute('disabled');
-      } else {
-        SelectTags[k].setAttribute('disabled', '');
-      }
+      SelectTags[k].disabled = disabled;
     }
   }
 };
@@ -228,14 +220,14 @@ var addMainPinEvent = function () {
     var pinCords = leftCords.slice(0, leftCords.length - 2) + ', ' + topCords.slice(0, leftCords.length - 2);
     generateMapPins(ads);
     createPopupCard(ads[0]);
-    setAvailableFormFields(true);
+    setAvailableFormFields(false);
     setAddressFieldValue(pinCords);
     map.classList.remove('map--faded');
     adFormElem.classList.remove('ad-form--disabled');
   });
 };
 
-setAvailableFormFields(false);
+setAvailableFormFields(true);
 
 var mapPinsElem = document.querySelector('.map__pins');
 var mapPinMain = mapPinsElem.querySelector('.map__pin--main');
