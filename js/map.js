@@ -221,11 +221,12 @@ var addMainPinEvent = function () {
 
 // Навешиваем события на пины
 var addPinsEvent = function () {
-  mapPinsElem.addEventListener('mouseup', function (evt) {
-    if (!evt.target.id) {
+  mapPinsElem.addEventListener('click', function (evt) {
+    var pinId = (evt.target.id) ? evt.target.id : evt.target.parentElement.id;
+    if (!evt.target.id && !evt.target.parentElement.id) {
       return;
     }
-    createPopupCard(ads[evt.target.id]);
+    createPopupCard(ads[pinId]);
   });
 };
 
