@@ -191,19 +191,11 @@ var createPopupCard = function (adObj) {
   map.insertBefore(mapCardElem, mapFiltersContainer);
 };
 
-// Функция устанавливает доступность полей форм
-var setAvailableFormFields = function (disabled) {
-  var formTags = document.querySelectorAll('form');
-  for (var i = 0; i < formTags.length; i++) {
-    var SelectTags = formTags[i].querySelectorAll('select');
-    var fieldSetTags = formTags[i].querySelectorAll('fieldset');
-    for (var n = 0; n < fieldSetTags.length; n++) {
-      fieldSetTags[n].disabled = disabled;
-    }
-    for (var k = 0; k < SelectTags.length; k++) {
-      SelectTags[k].disabled = disabled;
-    }
-  }
+// Функция устанавливает доступность полей формы
+var setAvailableFormFields = function (formChildNodes, disabled) {
+  formChildNodes.forEach(function (node) {
+    node.disabled = disabled;
+  });
 };
 
 // Функция заполняет поле адреса кординатами пина
@@ -220,26 +212,30 @@ var addMainPinEvent = function () {
     var pinCords = leftCords.slice(0, leftCords.length - 2) + ', ' + topCords.slice(0, leftCords.length - 2);
     generateMapPins(ads);
     createPopupCard(ads[0]);
-    setAvailableFormFields(false);
+    setAvailableFormFields(filterFormChildNodes, false);
+    setAvailableFormFields(adFormChildNodes, false);
     setAddressFieldValue(pinCords);
     map.classList.remove('map--faded');
     adFormElem.classList.remove('ad-form--disabled');
   });
 };
 
-setAvailableFormFields(true);
-
 var mapPinsElem = document.querySelector('.map__pins');
 var mapPinMain = mapPinsElem.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
 var adFormElem = document.querySelector('.ad-form');
 var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
+var filterFormChildNodes = document.querySelectorAll('.map__filters > *');
+var adFormChildNodes = document.querySelectorAll('.ad-form > *');
 var offerTypeRusValues = {
   palace: 'Дворец',
   flat: 'Квартира',
   house: 'Дом',
   bungalo: 'Бунгало'
 };
+
+setAvailableFormFields(filterFormChildNodes, true);
+setAvailableFormFields(adFormChildNodes, true);
 
 var ads = createAds();
 
