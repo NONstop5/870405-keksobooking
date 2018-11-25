@@ -220,6 +220,14 @@ var addMainPinEvent = function () {
   });
 };
 
+var addHousingTypeEvent = function () {
+  housingTypeElem.addEventListener('change', function (evt) {
+    var selectedValue = evt.target.value;
+    pricePerNightElem.min = housingTypeMinPrice[selectedValue];
+    pricePerNightElem.placeholder = housingTypeMinPrice[selectedValue];
+  });
+};
+
 var mapPinsElem = document.querySelector('.map__pins');
 var mapPinMain = mapPinsElem.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
@@ -227,11 +235,19 @@ var adFormElem = document.querySelector('.ad-form');
 var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
 var filterFormChildNodes = document.querySelectorAll('.map__filters > *');
 var adFormChildNodes = document.querySelectorAll('.ad-form > *');
+var pricePerNightElem = document.querySelector('#price');
+var housingTypeElem = document.querySelector('#type');
 var offerTypeRusValues = {
   palace: 'Дворец',
   flat: 'Квартира',
   house: 'Дом',
   bungalo: 'Бунгало'
+};
+var housingTypeMinPrice = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
 };
 
 setAvailableFormFields(filterFormChildNodes, true);
@@ -240,3 +256,4 @@ setAvailableFormFields(adFormChildNodes, true);
 var ads = createAds();
 
 addMainPinEvent();
+addHousingTypeEvent();
