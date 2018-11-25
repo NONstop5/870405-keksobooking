@@ -220,11 +220,38 @@ var addMainPinEvent = function () {
   });
 };
 
+// Навешиваем события на тип жилья
 var addHousingTypeEvent = function () {
   housingTypeElem.addEventListener('change', function (evt) {
     var selectedValue = evt.target.value;
     pricePerNightElem.min = housingTypeMinPrice[selectedValue];
     pricePerNightElem.placeholder = housingTypeMinPrice[selectedValue];
+  });
+};
+
+// Навешиваем события на время заезда
+var addTimeInEvent = function () {
+  timeInElem.addEventListener('change', function (evt) {
+    var options = evt.target;
+    for (var i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        timeOutElem[i].selected = true;
+        break;
+      }
+    }
+  });
+};
+
+// Навешиваем события на время выезда
+var addTimeOutEvent = function () {
+  timeOutElem.addEventListener('change', function (evt) {
+    var options = evt.target;
+    for (var i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        timeInElem[i].selected = true;
+        break;
+      }
+    }
   });
 };
 
@@ -237,6 +264,8 @@ var filterFormChildNodes = document.querySelectorAll('.map__filters > *');
 var adFormChildNodes = document.querySelectorAll('.ad-form > *');
 var pricePerNightElem = document.querySelector('#price');
 var housingTypeElem = document.querySelector('#type');
+var timeInElem = document.querySelector('#timein');
+var timeOutElem = document.querySelector('#timeout');
 var offerTypeRusValues = {
   palace: 'Дворец',
   flat: 'Квартира',
@@ -257,3 +286,5 @@ var ads = createAds();
 
 addMainPinEvent();
 addHousingTypeEvent();
+addTimeInEvent();
+addTimeOutEvent();
