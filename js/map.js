@@ -222,6 +222,9 @@ var addMainPinEvent = function () {
 // Навешиваем события на пины
 var addPinsEvent = function () {
   mapPinsElem.addEventListener('mouseup', function (evt) {
+    if (!evt.target.id) {
+      return;
+    }
     createPopupCard(ads[evt.target.id]);
   });
 };
