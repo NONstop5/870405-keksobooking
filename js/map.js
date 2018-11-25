@@ -232,26 +232,14 @@ var addHousingTypeEvent = function () {
 // Навешиваем события на время заезда
 var addTimeInEvent = function () {
   timeInElem.addEventListener('change', function (evt) {
-    var options = evt.target;
-    for (var i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        timeOutElem[i].selected = true;
-        break;
-      }
-    }
+    timeOutElem.value = evt.target.value;
   });
 };
 
 // Навешиваем события на время выезда
 var addTimeOutEvent = function () {
   timeOutElem.addEventListener('change', function (evt) {
-    var options = evt.target;
-    for (var i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        timeInElem[i].selected = true;
-        break;
-      }
-    }
+    timeInElem.value = evt.target.value;
   });
 };
 
