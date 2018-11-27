@@ -252,6 +252,26 @@ var addTimeOutEvent = function () {
   });
 };
 
+// Навешиваем события на количество комнат
+var addRoomNumberEvent = function () {
+  roomNumberElem.addEventListener('change', function (evt) {
+    var curIntVal = parseInt(evt.target.value, 10);
+    capacityElem.value = evt.target.value;
+
+    for (var i = 0; i < capacityElem.length; i++) {
+      capacityElem[i].disabled = true;
+    }
+
+    if (curIntVal) {
+      for (i = 1; i <= curIntVal; i++) {
+        capacityElem[i].disabled = false;
+      }
+    } else {
+      capacityElem[0].disabled = false;
+    }
+  });
+};
+
 var mapPinsElem = document.querySelector('.map__pins');
 var mapPinMain = mapPinsElem.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
@@ -263,6 +283,8 @@ var pricePerNightElem = document.querySelector('#price');
 var housingTypeElem = document.querySelector('#type');
 var timeInElem = document.querySelector('#timein');
 var timeOutElem = document.querySelector('#timeout');
+var roomNumberElem = document.querySelector('#room_number');
+var capacityElem = document.querySelector('#capacity');
 var offerTypeRusValues = {
   palace: 'Дворец',
   flat: 'Квартира',
@@ -286,3 +308,4 @@ addPinsEvent();
 addHousingTypeEvent();
 addTimeInEvent();
 addTimeOutEvent();
+addRoomNumberEvent();
