@@ -222,11 +222,10 @@ var addMainPinEvent = function () {
 // Навешиваем события на пины
 var addPinsEvent = function () {
   mapPinsElem.addEventListener('click', function (evt) {
-    var pinId = (evt.target.id) ? evt.target.id : evt.target.parentElement.id;
-    if (!evt.target.id && !evt.target.parentElement.id) {
-      return;
+    var pinElem = evt.target.closest('.map__pin:not(.map__pin--main)');
+    if (pinElem) {
+      createPopupCard(ads[pinElem.id]);
     }
-    createPopupCard(ads[pinId]);
   });
 };
 
