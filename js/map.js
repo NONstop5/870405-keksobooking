@@ -20,7 +20,7 @@ var shuffleArray = function (array) {
   return array;
 };
 
-// Функция создания нового элемента
+// Функция создает новый элемент
 var createNewElement = function (tagName, className, textContent) {
   var newElement = document.createElement(tagName);
   newElement.classList.add(className);
@@ -77,6 +77,7 @@ var createAds = function () {
     var locationPinX = getRandomValueRange(pinArrowStartCordsX, pinArrowEndCordsX);
     var locationPinY = getRandomValueRange(pinArrowStartCordsY, pinArrowEndCordsY);
     var ad = {
+      id: i,
       author: {
         avatar: AVATAR_PATH + 'user0' + (i + 1) + AVATAR_EXTENSION // строка, адрес изображения вида img/avatars/user{{xx}}.png, где {{xx}} это число от 1 до 8 с ведущим нулём. Например, 01, 02 и т. д. Адреса изображений не повторяются
       },
@@ -110,6 +111,7 @@ var createMapPinElement = function (adObj) {
   var pinImg = mapPinElem.querySelector('img');
 
   mapPinElem.style = 'left: ' + adObj.location.x + 'px; top: ' + adObj.location.y + 'px;';
+  mapPinElem.setAttribute('id', adObj.id);
   pinImg.src = adObj.author.avatar;
   pinImg.alt = adObj.offer.title;
 
@@ -128,7 +130,8 @@ var generateMapPins = function (adsArray) {
   mapPinsElem.appendChild(mapPinsFragment);
 };
 
-var generateOfferFeatures = function (futuresArray) {
+// Функция содает список фич в объявлении
+var generateOfferFeaturesElem = function (futuresArray) {
   var futureFragment = document.createDocumentFragment();
   futuresArray.forEach(function (value) {
     var futureElem = createNewElement('li', 'popup__feature', '');
@@ -138,7 +141,8 @@ var generateOfferFeatures = function (futuresArray) {
   return futureFragment;
 };
 
-var generateOfferPhotos = function (photosArray) {
+// Функция содает список фото в объявлении
+var generateOfferPhotosElem = function (photosArray) {
   var photoFragment = document.createDocumentFragment();
   photosArray.forEach(function (value) {
     var photoElem = createNewElement('img', 'popup__photo', '');
@@ -151,6 +155,7 @@ var generateOfferPhotos = function (photosArray) {
   return photoFragment;
 };
 
+// Функция содает список фич в объявлении
 var createPopupCard = function (adObj) {
   var mapCardTemplate = document.querySelector('#card').content.querySelector('article');
   var mapCardElem = mapCardTemplate.cloneNode(true);
@@ -176,27 +181,109 @@ var createPopupCard = function (adObj) {
   offerTime.textContent = 'Заезд после ' + adObj.offer.checkin + ', выезд до ' + adObj.offer.checkout;
 
   offerFeatures.innerHTML = '';
-  offerFeatures.appendChild(generateOfferFeatures(adObj.offer.features));
+  offerFeatures.appendChild(generateOfferFeaturesElem(adObj.offer.features));
 
   offerDesc.textContent = adObj.offer.description;
 
   offerPhotos.innerHTML = '';
-  offerPhotos.appendChild(generateOfferPhotos(adObj.offer.photos));
+  offerPhotos.appendChild(generateOfferPhotosElem(adObj.offer.photos));
 
   map.insertBefore(mapCardElem, mapFiltersContainer);
 };
 
+// Функция устанавливает доступность полей формы
+var setAvailableFormFields = function (formChildNodes, disabled) {
+  formChildNodes.forEach(function (node) {
+    node.disabled = disabled;
+  });
+};
+
+// Функция заполняет поле адреса кординатами пина
+var setAddressFieldValue = function (pinCords) {
+  var adressFieldElem = adFormElem.querySelector('#address');
+  adressFieldElem.value = pinCords;
+};
+
+// Навешиваем события на главный пин
+var addMainPinEvent = function () {
+  mapPinMain.addEventListener('mouseup', function (evt) {
+    var leftCords = evt.target.style['left'];
+    var topCords = evt.target.style['top'];
+    var pinCords = leftCords.slice(0, leftCords.length - 2) + ', ' + topCords.slice(0, leftCords.length - 2);
+    generateMapPins(ads);
+    setAvailableFormFields(filterFormChildNodes, false);
+    setAvailableFormFields(adFormChildNodes, false);
+    setAddressFieldValue(pinCords);
+    map.classList.remove('map--faded');
+    adFormElem.classList.remove('ad-form--disabled');
+  });
+};
+
+// Навешиваем события на пины
+var addPinsEvent = function () {
+  mapPinsElem.addEventListener('click', function (evt) {
+    var pinId = (evt.target.id) ? evt.target.id : evt.target.parentElement.id;
+    if (!evt.target.id && !evt.target.parentElement.id) {
+      return;
+    }
+    createPopupCard(ads[pinId]);
+  });
+};
+
+// Навешиваем события на тип жилья
+var addHousingTypeEvent = function () {
+  housingTypeElem.addEventListener('change', function (evt) {
+    var selectedValue = evt.target.value;
+    pricePerNightElem.min = housingTypeMinPrice[selectedValue];
+    pricePerNightElem.placeholder = housingTypeMinPrice[selectedValue];
+  });
+};
+
+// Навешиваем события на время заезда
+var addTimeInEvent = function () {
+  timeInElem.addEventListener('change', function (evt) {
+    timeOutElem.value = evt.target.value;
+  });
+};
+
+// Навешиваем события на время выезда
+var addTimeOutEvent = function () {
+  timeOutElem.addEventListener('change', function (evt) {
+    timeInElem.value = evt.target.value;
+  });
+};
+
 var mapPinsElem = document.querySelector('.map__pins');
+var mapPinMain = mapPinsElem.querySelector('.map__pin--main');
 var map = document.querySelector('.map');
+var adFormElem = document.querySelector('.ad-form');
 var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
+var filterFormChildNodes = document.querySelectorAll('.map__filters > *');
+var adFormChildNodes = document.querySelectorAll('.ad-form > *');
+var pricePerNightElem = document.querySelector('#price');
+var housingTypeElem = document.querySelector('#type');
+var timeInElem = document.querySelector('#timein');
+var timeOutElem = document.querySelector('#timeout');
 var offerTypeRusValues = {
   palace: 'Дворец',
   flat: 'Квартира',
   house: 'Дом',
   bungalo: 'Бунгало'
 };
+var housingTypeMinPrice = {
+  bungalo: 0,
+  flat: 1000,
+  house: 5000,
+  palace: 10000
+};
+
+setAvailableFormFields(filterFormChildNodes, true);
+setAvailableFormFields(adFormChildNodes, true);
 
 var ads = createAds();
 
-generateMapPins(ads);
-createPopupCard(ads[0]);
+addMainPinEvent();
+addPinsEvent();
+addHousingTypeEvent();
+addTimeInEvent();
+addTimeOutEvent();
