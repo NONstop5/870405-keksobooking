@@ -1,8 +1,5 @@
 'use strict';
 
-var AVATAR_EXTENSION = '.png';
-var AVATAR_PATH = 'img/avatars/';
-
 // Функция генерации целого случайного числа из заданного диапазона
 var getRandomValueRange = function (minValue, maxValue) {
   return Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
@@ -67,15 +64,9 @@ var createAds = function () {
   ];
   var result = [];
 
-  var pinArrowStartCordsX = 0;
-  var pinArrowEndCordsX = map.clientWidth - 50;
-  var pinArrowStartCordsY = 130 - 35;
-  var pinArrowEndCordsY = 630;
-
-
   for (var i = 0; i < 8; i++) {
-    var locationPinX = getRandomValueRange(pinArrowStartCordsX, pinArrowEndCordsX);
-    var locationPinY = getRandomValueRange(pinArrowStartCordsY, pinArrowEndCordsY);
+    var locationPinX = getRandomValueRange(PIN_ARROW_MIN_CORDS_X, PIN_ARROW_MAX_CORDS_X - PIN_SIZE);
+    var locationPinY = getRandomValueRange(PIN_ARROW_MIN_CORDS_Y - PIN_SIZE, PIN_ARROW_MAX_CORDS_Y);
     var ad = {
       id: i,
       author: {
@@ -206,16 +197,73 @@ var setAddressFieldValue = function (pinCords) {
 
 // Навешиваем события на главный пин
 var addMainPinEvent = function () {
-  mapPinMain.addEventListener('mouseup', function (evt) {
-    var leftCords = evt.target.style['left'];
-    var topCords = evt.target.style['top'];
-    var pinCords = leftCords.slice(0, leftCords.length - 2) + ', ' + topCords.slice(0, leftCords.length - 2);
-    generateMapPins(ads);
-    setAvailableFormFields(filterFormChildNodes, false);
-    setAvailableFormFields(adFormChildNodes, false);
-    setAddressFieldValue(pinCords);
-    map.classList.remove('map--faded');
-    adFormElem.classList.remove('ad-form--disabled');
+  mapPinMain.addEventListener('mousedown', function (mousedownEvt) {
+    mousedownEvt.preventDefault();
+    var allowableOffset = 10;
+
+    var startPinCords = {
+      left: parseInt(mapPinMain.style.left, 10),
+      top: parseInt(mapPinMain.style.top, 10)
+    };
+
+    var startMouseCords = {
+      x: mousedownEvt.clientX,
+      y: mousedownEvt.clientY
+    };
+
+    var onMouseMove = function (mousemoveEvt) {
+      mousemoveEvt.preventDefault();
+
+      var offsetMouseCords = {
+        x: startMouseCords.x - mousemoveEvt.clientX,
+        y: startMouseCords.y - mousemoveEvt.clientY
+      };
+
+      var newLeftCords = mapPinMain.offsetLeft - offsetMouseCords.x;
+      var newTopCords = mapPinMain.offsetTop - offsetMouseCords.y;
+
+      if (newTopCords < PIN_ARROW_MIN_CORDS_Y - PIN_MAIN_SIZE ||
+          newTopCords > PIN_ARROW_MAX_CORDS_Y ||
+          newLeftCords < PIN_ARROW_MIN_CORDS_X ||
+          newLeftCords > PIN_ARROW_MAX_CORDS_X - PIN_MAIN_SIZE) {
+        return;
+      }
+
+      startMouseCords.x = mousemoveEvt.clientX;
+      startMouseCords.y = mousemoveEvt.clientY;
+
+      mapPinMain.style.left = newLeftCords + 'px';
+      mapPinMain.style.top = newTopCords + 'px';
+    };
+
+    var onMouseUp = function (mouseupEvt) {
+      mouseupEvt.preventDefault();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+
+      var generalOffsetX = mapPinMain.offsetLeft - startPinCords.left;
+      var generalOffsetY = mapPinMain.offsetTop - startPinCords.top;
+
+      if (Math.abs(generalOffsetX) < allowableOffset && Math.abs(generalOffsetY) < allowableOffset) {
+        mapPinMain.style.left = startPinCords.left + 'px';
+        mapPinMain.style.top = startPinCords.top + 'px';
+        return;
+      }
+
+      var leftCords = mouseupEvt.target.style['left'];
+      var topCords = mouseupEvt.target.style['top'];
+      var pinCords = parseInt(leftCords, 10) + ', ' + parseInt(topCords, 10);
+      generateMapPins(ads);
+      setAvailableFormFields(filterFormChildNodes, false);
+      setAvailableFormFields(adFormChildNodes, false);
+      setAddressFieldValue(pinCords);
+      map.classList.remove('map--faded');
+      adFormElem.classList.remove('ad-form--disabled');
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+
   });
 };
 
@@ -297,6 +345,15 @@ var housingTypeMinPrice = {
   house: 5000,
   palace: 10000
 };
+
+var AVATAR_EXTENSION = '.png';
+var AVATAR_PATH = 'img/avatars/';
+var PIN_MAIN_SIZE = 65;
+var PIN_SIZE = 50;
+var PIN_ARROW_MIN_CORDS_X = 0;
+var PIN_ARROW_MAX_CORDS_X = map.clientWidth;
+var PIN_ARROW_MIN_CORDS_Y = 130;
+var PIN_ARROW_MAX_CORDS_Y = 630;
 
 setAvailableFormFields(filterFormChildNodes, true);
 setAvailableFormFields(adFormChildNodes, true);
