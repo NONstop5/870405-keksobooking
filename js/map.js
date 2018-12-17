@@ -190,8 +190,9 @@ var setAvailableFormFields = function (formChildNodes, disabled) {
 };
 
 // Функция заполняет поле адреса кординатами пина
-var setAddressFieldValue = function (pinCords) {
+var setAddressFieldValue = function (leftCords, topCords) {
   var adressFieldElem = adFormElem.querySelector('#address');
+  var pinCords = leftCords + ', ' + topCords;
   adressFieldElem.value = pinCords;
 };
 
@@ -222,43 +223,37 @@ var addMainPinEvent = function () {
       var newLeftCords = mapPinMain.offsetLeft - offsetMouseCords.x;
       var newTopCords = mapPinMain.offsetTop - offsetMouseCords.y;
 
-      if (newTopCords < PIN_ARROW_MIN_CORDS_Y - PIN_MAIN_SIZE ||
-          newTopCords > PIN_ARROW_MAX_CORDS_Y ||
-          newLeftCords < PIN_ARROW_MIN_CORDS_X ||
-          newLeftCords > PIN_ARROW_MAX_CORDS_X - PIN_MAIN_SIZE) {
-        return;
+      if (newTopCords > PIN_ARROW_MIN_CORDS_Y - PIN_MAIN_SIZE && newTopCords < PIN_ARROW_MAX_CORDS_Y && newLeftCords > PIN_ARROW_MIN_CORDS_X && newLeftCords < PIN_ARROW_MAX_CORDS_X - PIN_MAIN_SIZE) {
+        startMouseCords.x = mousemoveEvt.clientX;
+        startMouseCords.y = mousemoveEvt.clientY;
+
+        mapPinMain.style.left = newLeftCords + 'px';
+        mapPinMain.style.top = newTopCords + 'px';
       }
-
-      startMouseCords.x = mousemoveEvt.clientX;
-      startMouseCords.y = mousemoveEvt.clientY;
-
-      mapPinMain.style.left = newLeftCords + 'px';
-      mapPinMain.style.top = newTopCords + 'px';
     };
 
     var onMouseUp = function (mouseupEvt) {
       mouseupEvt.preventDefault();
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
 
       var generalOffsetX = mapPinMain.offsetLeft - startPinCords.left;
       var generalOffsetY = mapPinMain.offsetTop - startPinCords.top;
+      var leftCords = parseInt(mapPinMain.style.left, 10);
+      var topCords = parseInt(mapPinMain.style.top, 10);
 
-      if (Math.abs(generalOffsetX) < allowableOffset && Math.abs(generalOffsetY) < allowableOffset) {
+      if (Math.abs(generalOffsetX) > allowableOffset || Math.abs(generalOffsetY) > allowableOffset) {
+        generateMapPins(ads);
+        setAvailableFormFields(filterFormChildNodes, false);
+        setAvailableFormFields(adFormChildNodes, false);
+        setAddressFieldValue(leftCords, topCords);
+        map.classList.remove('map--faded');
+        adFormElem.classList.remove('ad-form--disabled');
+      } else {
         mapPinMain.style.left = startPinCords.left + 'px';
         mapPinMain.style.top = startPinCords.top + 'px';
-        return;
       }
 
-      var leftCords = mouseupEvt.target.style['left'];
-      var topCords = mouseupEvt.target.style['top'];
-      var pinCords = parseInt(leftCords, 10) + ', ' + parseInt(topCords, 10);
-      generateMapPins(ads);
-      setAvailableFormFields(filterFormChildNodes, false);
-      setAvailableFormFields(adFormChildNodes, false);
-      setAddressFieldValue(pinCords);
-      map.classList.remove('map--faded');
-      adFormElem.classList.remove('ad-form--disabled');
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
     };
 
     document.addEventListener('mousemove', onMouseMove);
