@@ -15,6 +15,22 @@
     adressFieldElem.value = pinCords;
   };
 
+  var setAdFormDisabled = function (flag) {
+    if (flag) {
+      window.map.mapElem.classList.add('map--faded');
+      adFormElem.classList.add('ad-form--disabled');
+    } else {
+      window.map.mapElem.classList.remove('map--faded');
+      adFormElem.classList.remove('ad-form--disabled');
+    }
+  };
+
+  var activateForm = function () {
+    setAvailableFormFields(filterFormChildNodes, false);
+    setAvailableFormFields(adFormChildNodes, false);
+    setAdFormDisabled(false);
+  };
+
   // Навешиваем события на тип жилья
   var addHousingTypeEvent = function () {
     housingTypeElem.addEventListener('change', function (evt) {
@@ -77,7 +93,7 @@
   setAvailableFormFields(adFormChildNodes, true);
 
   window.form = {
-    setAddressFieldValue: setAddressFieldValue,
-    setAvailableFormFields: setAvailableFormFields
+    activateForm: activateForm,
+    setAddressFieldValue: setAddressFieldValue
   };
 })();

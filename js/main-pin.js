@@ -47,11 +47,8 @@
 
         if (Math.abs(generalOffsetX) > allowableOffset || Math.abs(generalOffsetY) > allowableOffset) {
           window.pins.generateMapPins();
-          window.form.setAvailableFormFields(filterFormChildNodes, false);
-          window.form.setAvailableFormFields(adFormChildNodes, false);
+          window.form.activateForm();
           window.form.setAddressFieldValue(leftCords, topCords);
-          map.classList.remove('map--faded');
-          adFormElem.classList.remove('ad-form--disabled');
         } else {
           mapPinMain.style.left = startPinCords.left + 'px';
           mapPinMain.style.top = startPinCords.top + 'px';
@@ -67,17 +64,15 @@
     });
   };
 
-  var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
-  var filterFormChildNodes = document.querySelectorAll('.map__filters > *');
-  var adFormChildNodes = document.querySelectorAll('.ad-form > *');
-  var adFormElem = document.querySelector('.ad-form');
 
   var PIN_MAIN_SIZE = 65;
   var PIN_ARROW_MIN_CORDS_X = 0;
-  var PIN_ARROW_MAX_CORDS_X = map.clientWidth;
+  var PIN_ARROW_MAX_CORDS_X = 1200;
   var PIN_ARROW_MIN_CORDS_Y = 130;
   var PIN_ARROW_MAX_CORDS_Y = 630;
 
-  addMainPinEvent();
+  window.mainPin = {
+    addMainPinEvent: addMainPinEvent
+  };
 })();
