@@ -72,7 +72,6 @@
   var PIN_ARROW_MIN_CORDS_Y = 130;
   var PIN_ARROW_MAX_CORDS_Y = 630;
 
-  window.mainPin = {
-    addMainPinEvent: addMainPinEvent
-  };
+  addMainPinEvent();
+
 })();

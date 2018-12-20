@@ -42,8 +42,9 @@
 
   var PIN_SIZE = 50;
 
+  addPinsEvent();
+
   window.pins = {
-    addPinsEvent: addPinsEvent,
     generateMapPins: generateMapPins
   };
 })();
