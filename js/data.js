@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+/*
   // Функция создает массив объектов объявлений
   var createAds = function () {
     var result = [];
@@ -78,6 +79,7 @@
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
   ];
+*/
   var offerTypeRusValues = {
     palace: 'Дворец',
     flat: 'Квартира',
@@ -91,15 +93,34 @@
     palace: 10000
   };
 
+  var getRemoteData = function () {
+    var serverUrl = 'https://js.dump.academy/keksobooking/data';
+    var result = '';
+
+    var onSuccess = function (data) {
+      result = data;
+    };
+
+    var onError = function (message) {
+      console.error(message);
+    };
+
+    window.backend.getDataFromServer(serverUrl, onSuccess, onError);
+
+    return result;
+  };
+
   window.data = {
+    /*
     titles: titles,
-    types: types,
+    type: types,
     times: times,
     features: features,
     photos: photos,
+    */
     offerTypeRusValues: offerTypeRusValues,
     housingTypeMinPrice: housingTypeMinPrice,
-    ads: createAds()
+    getRemoteData: getRemoteData
   };
 
 })();
