@@ -15,9 +15,8 @@
   };
 
   // Функция содает метки объявлений на карте
-  var generateMapPins = function () {
+  var generateMapPins = function (ads) {
     var mapPinsFragment = document.createDocumentFragment();
-    var ads = window.data.getRemoteData();
     ads.forEach(function (adObj, i) {
       adObj.id = i;
       var mapPinElement = createMapPinElement(adObj);

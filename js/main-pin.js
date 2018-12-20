@@ -46,7 +46,7 @@
         var topCords = parseInt(mapPinMain.style.top, 10);
 
         if (Math.abs(generalOffsetX) > allowableOffset || Math.abs(generalOffsetY) > allowableOffset) {
-          window.pins.generateMapPins();
+          window.data.getRemoteData();
           window.form.activateForm();
           window.form.setAddressFieldValue(leftCords, topCords);
         } else {
