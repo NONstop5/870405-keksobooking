@@ -15,10 +15,10 @@
   };
 
   // Функция содает метки объявлений на карте
-  var generateMapPins = function () {
+  var generateMapPins = function (ads) {
     var mapPinsFragment = document.createDocumentFragment();
-
-    window.data.ads.forEach(function (adObj) {
+    ads.forEach(function (adObj, i) {
+      adObj.id = i;
       var mapPinElement = createMapPinElement(adObj);
       mapPinsFragment.appendChild(mapPinElement);
     });
@@ -31,7 +31,7 @@
     mapPinsElem.addEventListener('click', function (evt) {
       var pinElem = evt.target.closest('.map__pin:not(.map__pin--main)');
       if (pinElem) {
-        window.popup.createPopupCard(window.data.ads[pinElem.id]);
+        window.data.getRemoteData(pinElem.id);
       }
     });
   };
@@ -41,8 +41,9 @@
 
   var PIN_SIZE = 50;
 
+  addPinsEvent();
+
   window.pins = {
-    addPinsEvent: addPinsEvent,
     generateMapPins: generateMapPins
   };
 })();

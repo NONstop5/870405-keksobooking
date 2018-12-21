@@ -1,6 +1,16 @@
 'use strict';
 
 (function () {
+
+  var startWork = function () {
+    var leftCords = parseInt(mapPinMain.style.left, 10);
+    var topCords = parseInt(mapPinMain.style.top, 10);
+
+    window.data.getRemoteData();
+    window.form.activateForm();
+    window.form.setAddressFieldValue(leftCords, topCords);
+  };
+
   // Навешиваем события на главный пин
   var addMainPinEvent = function () {
     mapPinMain.addEventListener('mousedown', function (mousedownEvt) {
@@ -42,13 +52,9 @@
 
         var generalOffsetX = mapPinMain.offsetLeft - startPinCords.left;
         var generalOffsetY = mapPinMain.offsetTop - startPinCords.top;
-        var leftCords = parseInt(mapPinMain.style.left, 10);
-        var topCords = parseInt(mapPinMain.style.top, 10);
 
         if (Math.abs(generalOffsetX) > allowableOffset || Math.abs(generalOffsetY) > allowableOffset) {
-          window.pins.generateMapPins();
-          window.form.activateForm();
-          window.form.setAddressFieldValue(leftCords, topCords);
+          startWork();
         } else {
           mapPinMain.style.left = startPinCords.left + 'px';
           mapPinMain.style.top = startPinCords.top + 'px';
@@ -72,7 +78,10 @@
   var PIN_ARROW_MIN_CORDS_Y = 130;
   var PIN_ARROW_MAX_CORDS_Y = 630;
 
+  addMainPinEvent();
+
   window.mainPin = {
-    addMainPinEvent: addMainPinEvent
+    startWork: startWork
   };
+
 })();
