@@ -28,14 +28,7 @@
     xhr.send();
   };
 
-  var sendFormDataToServer = function (data, onLoad, onError) {
-    var xhr = new XMLHttpRequest();
-
-    xhr.responseType = 'json';
-  };
-
   window.backend = {
-    getDataFromServer: getDataFromServer,
-    sendFormDataToServer: sendFormDataToServer
+    getDataFromServer: getDataFromServer
   };
 })();
