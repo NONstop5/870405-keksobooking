@@ -31,7 +31,7 @@
     mapPinsElem.addEventListener('click', function (evt) {
       var pinElem = evt.target.closest('.map__pin:not(.map__pin--main)');
       if (pinElem) {
-        window.popup.createPopupCard(window.data.ads[pinElem.id]);
+        window.data.getRemoteData(pinElem.id);
       }
     });
   };
