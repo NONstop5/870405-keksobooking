@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+
+  var ESC_KEY_CODE = 27;
+
   // Функция содает список фич в объявлении
   var generateOfferFeaturesElem = function (futuresArray) {
     var futureFragment = document.createDocumentFragment();
@@ -31,7 +34,7 @@
     var mapCardTemplate = document.querySelector('#card').content.querySelector('article');
     var mapCardElem = mapCardTemplate.cloneNode(true);
 
-    var mapFiltersContainer = map.querySelector('.map__filters-container');
+    var mapFiltersContainer = window.map.mapElem.querySelector('.map__filters-container');
     var avatarImg = mapCardElem.querySelector('img');
     var offerTitle = mapCardElem.querySelector('.popup__title');
     var offerAddress = mapCardElem.querySelector('.popup__text--address');
@@ -42,6 +45,8 @@
     var offerFeatures = mapCardElem.querySelector('.popup__features');
     var offerDesc = mapCardElem.querySelector('.popup__description');
     var offerPhotos = mapCardElem.querySelector('.popup__photos');
+
+    removePopupCard();
 
     avatarImg.src = adObj.author.avatar;
     offerTitle.textContent = adObj.offer.title;
@@ -59,10 +64,32 @@
     offerPhotos.innerHTML = '';
     offerPhotos.appendChild(generateOfferPhotosElem(adObj.offer.photos));
 
-    map.insertBefore(mapCardElem, mapFiltersContainer);
+    window.map.mapElem.insertBefore(mapCardElem, mapFiltersContainer);
+
+    addPopupEvents(mapCardElem);
   };
 
-  var map = document.querySelector('.map');
+  // Удаляет окно объявления
+  var removePopupCard = function () {
+    var currentPopup = window.map.mapElem.querySelector('.map__card');
+    if (currentPopup) {
+      window.map.mapElem.removeChild(currentPopup);
+    }
+  };
+
+  // Навешиваем события на окно объявления
+  var addPopupEvents = function (mapCardElem) {
+    var closePopupIcon = mapCardElem.querySelector('.popup__close');
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ESC_KEY_CODE) {
+        removePopupCard();
+      }
+    });
+
+    closePopupIcon.addEventListener('click', function () {
+      removePopupCard();
+    });
+  };
 
   window.popup = {
     createPopupCard: createPopupCard
