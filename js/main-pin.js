@@ -2,11 +2,12 @@
 
 (function () {
 
+  // Начало перемещения главного пина
   var startWork = function () {
     var leftCords = parseInt(mapPinMain.style.left, 10);
     var topCords = parseInt(mapPinMain.style.top, 10);
 
-    window.data.getRemoteData();
+    window.pins.getRemoteData();
     window.form.activateForm();
     window.form.setAddressFieldValue(leftCords, topCords);
   };
