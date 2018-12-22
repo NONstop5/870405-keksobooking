@@ -3,10 +3,12 @@
 (function () {
 
   var PIN_MAIN_SIZE = 65;
-  var PIN_ARROW_MIN_CORDS_X = 0;
-  var PIN_ARROW_MAX_CORDS_X = 1200;
-  var PIN_ARROW_MIN_CORDS_Y = 130;
-  var PIN_ARROW_MAX_CORDS_Y = 630;
+  var PinArowCord = {
+    MIN_X: 0,
+    MAX_X: 1200,
+    MIN_Y: 130,
+    MAX_Y: 630
+  };
 
   var setMainPinToStartCords = function () {
     mapPinMain.style.left = startPinCords.left + 'px';
@@ -36,26 +38,29 @@
           x: startMouseCords.x - mousemoveEvt.clientX,
           y: startMouseCords.y - mousemoveEvt.clientY
         };
+        var newCords = {
+          left: mapPinMain.offsetLeft - offsetMouseCords.x,
+          top: mapPinMain.offsetTop - offsetMouseCords.y
+        };
 
-        var newLeftCords = mapPinMain.offsetLeft - offsetMouseCords.x;
-        var newTopCords = mapPinMain.offsetTop - offsetMouseCords.y;
-
-        if (newTopCords > PIN_ARROW_MIN_CORDS_Y - PIN_MAIN_SIZE && newTopCords < PIN_ARROW_MAX_CORDS_Y && newLeftCords > PIN_ARROW_MIN_CORDS_X && newLeftCords < PIN_ARROW_MAX_CORDS_X - PIN_MAIN_SIZE) {
+        if (newCords.top > PinArowCord.MIN_Y - PIN_MAIN_SIZE && newCords.top < PinArowCord.MAX_Y && newCords.left > PinArowCord.MIN_X && newCords.left < PinArowCord.MAX_X - PIN_MAIN_SIZE) {
           startMouseCords.x = mousemoveEvt.clientX;
           startMouseCords.y = mousemoveEvt.clientY;
 
-          mapPinMain.style.left = newLeftCords + 'px';
-          mapPinMain.style.top = newTopCords + 'px';
+          mapPinMain.style.left = newCords.left + 'px';
+          mapPinMain.style.top = newCords.top + 'px';
         }
       };
 
       var onMouseUp = function (mouseupEvt) {
         mouseupEvt.preventDefault();
 
-        var generalOffsetX = mapPinMain.offsetLeft - startPinCords.left;
-        var generalOffsetY = mapPinMain.offsetTop - startPinCords.top;
+        var generalOffset = {
+          x: mapPinMain.offsetLeft - startPinCords.left,
+          y: mapPinMain.offsetTop - startPinCords.top
+        };
 
-        if (Math.abs(generalOffsetX) > allowableOffset || Math.abs(generalOffsetY) > allowableOffset) {
+        if (Math.abs(generalOffset.x) > allowableOffset || Math.abs(generalOffset.y) > allowableOffset) {
           getRemoteDataJSON();
         } else {
           setMainPinToStartCords();
