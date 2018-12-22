@@ -17,9 +17,10 @@
     return mapPinElem;
   };
 
-  // Функция содает метки объявлений на карте
-  var generateMapPins = function () {
+  // Содает метки объявлений на карте
+  var generateMapPins = function (adsArray) {
     var mapPinsFragment = document.createDocumentFragment();
+    ads = adsArray;
     ads.forEach(function (adObj, i) {
       adObj.id = i;
       var mapPinElement = createMapPinElement(adObj);
@@ -27,6 +28,14 @@
     });
 
     mapPinsElem.appendChild(mapPinsFragment);
+  };
+
+  // Удаляет все метки объявлений на карте
+  var deleteMapPins = function () {
+    var mapPinsList = mapPinsElem.querySelectorAll('.map__pin:not(.map__pin--main)');
+    mapPinsList.forEach(function (pinObj) {
+      mapPinsElem.removeChild(pinObj);
+    });
   };
 
   // Навешиваем события на пины
@@ -39,29 +48,14 @@
     });
   };
 
-  // Загружаем данные с сервера
-  var getRemoteData = function () {
-    var serverUrl = 'https://js.dump.academy/keksobooking/data';
-
-    var onSuccess = function (data) {
-      ads = data;
-      generateMapPins();
-    };
-
-    var onError = function (message) {
-      window.messages.showErrorMessage(message);
-    };
-
-    window.backend.getDataFromServer(serverUrl, onSuccess, onError);
-  };
-
   var mapPinsElem = document.querySelector('.map__pins');
-  var mapPinTemplate = document.querySelector('#pin').content.querySelector('button');
+  var mapPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var ads = [];
 
   addPinsEvent();
 
   window.pins = {
-    getRemoteData: getRemoteData
+    generateMapPins: generateMapPins,
+    deleteMapPins: deleteMapPins
   };
 })();

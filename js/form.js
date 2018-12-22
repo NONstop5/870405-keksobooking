@@ -1,34 +1,34 @@
 'use strict';
 
 (function () {
-  // Функция устанавливает доступность полей формы
+  // Устанавливает доступность полей формы
   var setAvailableFormFields = function (formChildNodes, disabled) {
     formChildNodes.forEach(function (node) {
       node.disabled = disabled;
     });
   };
 
-  // Функция заполняет поле адреса кординатами пина
+  // Заполняет поле адреса кординатами пина
   var setAddressFieldValue = function (leftCords, topCords) {
     var adressFieldElem = adFormElem.querySelector('#address');
     var pinCords = leftCords + ', ' + topCords;
     adressFieldElem.value = pinCords;
   };
 
-  var setAdFormDisabled = function (flag) {
+  // Устанавливает сласс доступности формы
+  var setFormDisabledClasses = function (flag) {
     if (flag) {
-      window.map.mapElem.classList.add('map--faded');
       adFormElem.classList.add('ad-form--disabled');
     } else {
-      window.map.mapElem.classList.remove('map--faded');
       adFormElem.classList.remove('ad-form--disabled');
     }
   };
 
-  var activateForm = function () {
-    setAvailableFormFields(filterFormChildNodes, false);
-    setAvailableFormFields(adFormChildNodes, false);
-    setAdFormDisabled(false);
+  // Устанавливает доступность формы и ее полей
+  var setFormDisabled = function (flag) {
+    setAvailableFormFields(filterFormChildNodes, flag);
+    setAvailableFormFields(adFormChildNodes, flag);
+    setFormDisabledClasses(flag);
   };
 
   // Навешиваем события на тип жилья
@@ -74,9 +74,38 @@
     });
   };
 
-  var filterFormChildNodes = document.querySelectorAll('.map__filters > *');
-  var adFormChildNodes = document.querySelectorAll('.ad-form > *');
+  // Навешиваем события на submit формы
+  var addFormSabmitEvents = function () {
+    adFormElem.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+      sendFormDataJSON();
+    });
+  };
+
+  // Отправка данных в формате JSON на сервер
+  var sendFormDataJSON = function () {
+    var url = 'https://js.dump.academy/keksobooking';
+
+    var onSuccess = function () {
+      window.messages.showSaccessMessage();
+      window.pins.deleteMapPins();
+      window.mainPin.setMainPinToStartCords();
+      window.map.setMapDisabledClasses(true);
+      adFormElem.reset();
+      setFormDisabled(true);
+    };
+
+    var onError = function (message) {
+      window.messages.showErrorMessage(message);
+    };
+
+    window.backend.sendServerDataJSON(url, new FormData(adFormElem), onSuccess, onError);
+
+  };
+
   var adFormElem = document.querySelector('.ad-form');
+  var adFormChildNodes = document.querySelectorAll('.ad-form > *');
+  var filterFormChildNodes = document.querySelectorAll('.map__filters > *');
   var pricePerNightElem = document.querySelector('#price');
   var housingTypeElem = document.querySelector('#type');
   var timeInElem = document.querySelector('#timein');
@@ -95,12 +124,13 @@
   addTimeInEvent();
   addTimeOutEvent();
   addRoomNumberEvent();
+  addFormSabmitEvents();
 
   setAvailableFormFields(filterFormChildNodes, true);
   setAvailableFormFields(adFormChildNodes, true);
 
   window.form = {
-    activateForm: activateForm,
+    setFormDisabled: setFormDisabled,
     setAddressFieldValue: setAddressFieldValue
   };
 })();
