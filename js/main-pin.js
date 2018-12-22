@@ -2,14 +2,15 @@
 
 (function () {
 
-  // Начало перемещения главного пина
-  var startWork = function () {
-    var leftCords = parseInt(mapPinMain.style.left, 10);
-    var topCords = parseInt(mapPinMain.style.top, 10);
+  var PIN_MAIN_SIZE = 65;
+  var PIN_ARROW_MIN_CORDS_X = 0;
+  var PIN_ARROW_MAX_CORDS_X = 1200;
+  var PIN_ARROW_MIN_CORDS_Y = 130;
+  var PIN_ARROW_MAX_CORDS_Y = 630;
 
-    window.pins.getRemoteData();
-    window.form.activateForm();
-    window.form.setAddressFieldValue(leftCords, topCords);
+  var setMainPinToStartCords = function () {
+    mapPinMain.style.left = startPinCords.left + 'px';
+    mapPinMain.style.top = startPinCords.top + 'px';
   };
 
   // Навешиваем события на главный пин
@@ -18,7 +19,7 @@
       mousedownEvt.preventDefault();
       var allowableOffset = 10;
 
-      var startPinCords = {
+      startPinCords = {
         left: parseInt(mapPinMain.style.left, 10),
         top: parseInt(mapPinMain.style.top, 10)
       };
@@ -55,10 +56,9 @@
         var generalOffsetY = mapPinMain.offsetTop - startPinCords.top;
 
         if (Math.abs(generalOffsetX) > allowableOffset || Math.abs(generalOffsetY) > allowableOffset) {
-          startWork();
+          getRemoteDataJSON();
         } else {
-          mapPinMain.style.left = startPinCords.left + 'px';
-          mapPinMain.style.top = startPinCords.top + 'px';
+          setMainPinToStartCords();
         }
 
         document.removeEventListener('mousemove', onMouseMove);
@@ -71,18 +71,31 @@
     });
   };
 
-  var mapPinMain = document.querySelector('.map__pin--main');
+  // Загружаем данные с сервера
+  var getRemoteDataJSON = function () {
+    var url = 'https://js.dump.academy/keksobooking/data';
 
-  var PIN_MAIN_SIZE = 65;
-  var PIN_ARROW_MIN_CORDS_X = 0;
-  var PIN_ARROW_MAX_CORDS_X = 1200;
-  var PIN_ARROW_MIN_CORDS_Y = 130;
-  var PIN_ARROW_MAX_CORDS_Y = 630;
+    var onSuccess = function (data) {
+      window.pins.generateMapPins(data);
+      window.map.setMapDisabledClasses(false);
+      window.form.setFormDisabled(false);
+      window.form.setAddressFieldValue(parseInt(mapPinMain.style.left, 10), parseInt(mapPinMain.style.top, 10));
+    };
+
+    var onError = function (message) {
+      window.messages.showErrorMessage(message);
+      setMainPinToStartCords();
+    };
+
+    window.backend.getServerDataJSON(url, onSuccess, onError);
+  };
+  var mapPinMain = document.querySelector('.map__pin--main');
+  var startPinCords = {};
 
   addMainPinEvent();
 
   window.mainPin = {
-    startWork: startWork
+    setMainPinToStartCords: setMainPinToStartCords
   };
 
 })();
