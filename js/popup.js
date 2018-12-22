@@ -99,6 +99,7 @@
   };
 
   window.popup = {
-    createPopupCard: createPopupCard
+    createPopupCard: createPopupCard,
+    removePopupCard: removePopupCard
   };
 })();

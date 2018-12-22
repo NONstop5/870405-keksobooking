@@ -88,6 +88,7 @@
 
     var onSuccess = function () {
       window.messages.showSaccessMessage();
+      window.popup.removePopupCard();
       window.pins.deleteMapPins();
       window.mainPin.setMainPinToStartCords();
       window.map.setMapDisabledClasses(true);
