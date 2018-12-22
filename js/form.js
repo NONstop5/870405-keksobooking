@@ -35,8 +35,8 @@
   var addHousingTypeEvent = function () {
     housingTypeElem.addEventListener('change', function (evt) {
       var selectedValue = evt.target.value;
-      pricePerNightElem.min = window.data.housingTypeMinPrice[selectedValue];
-      pricePerNightElem.placeholder = window.data.housingTypeMinPrice[selectedValue];
+      pricePerNightElem.min = housingTypeMinPrice[selectedValue];
+      pricePerNightElem.placeholder = housingTypeMinPrice[selectedValue];
     });
   };
 
@@ -83,6 +83,13 @@
   var timeOutElem = document.querySelector('#timeout');
   var roomNumberElem = document.querySelector('#room_number');
   var capacityElem = document.querySelector('#capacity');
+
+  var housingTypeMinPrice = {
+    bungalo: 0,
+    flat: 1000,
+    house: 5000,
+    palace: 10000
+  };
 
   addHousingTypeEvent();
   addTimeInEvent();
