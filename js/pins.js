@@ -40,13 +40,10 @@
 
   // Подсвечивает активный пин и удаляет подсветку у предыдущего активного пина
   var setActivePinClass = function (pinElem) {
-    var selectedAd = ads.filter(function (ad) {
-      return ad.selected === true;
-    })[0];
-    if (selectedAd) {
-      var selectedPinElem = mapPinsElem.querySelector('.map__pin[id="' + selectedAd.id + '"]');
+    var selectedPinElem = mapPinsElem.querySelector('.map__pin.map__pin--active');
+    if (selectedPinElem) {
       selectedPinElem.classList.remove('map__pin--active');
-      ads[selectedAd.id].selected = false;
+      ads[selectedPinElem.id].selected = false;
     }
 
     ads[pinElem.id].selected = true;
