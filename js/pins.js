@@ -38,11 +38,28 @@
     });
   };
 
+  // Подсвечивает активный пин и удаляет подсветку у предыдущего активного пина
+  var setActivePinClass = function (pinElem) {
+    var selectedAd = ads.filter(function (ad) {
+      return ad.selected === true;
+    })[0];
+    if (selectedAd) {
+      var selectedPinElem = mapPinsElem.querySelector('.map__pin[id="' + selectedAd.id + '"]');
+      selectedPinElem.classList.remove('map__pin--active');
+      ads[selectedAd.id].selected = false;
+    }
+
+    ads[pinElem.id].selected = true;
+    pinElem.classList.add('map__pin--active');
+  };
+
   // Навешиваем события на пины
   var addPinsEvent = function () {
     mapPinsElem.addEventListener('click', function (evt) {
       var pinElem = evt.target.closest('.map__pin:not(.map__pin--main)');
+
       if (pinElem) {
+        setActivePinClass(pinElem);
         window.popup.createPopupCard(ads[pinElem.id]);
       }
     });
