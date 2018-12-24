@@ -28,9 +28,17 @@
     return newElement;
   };
 
+  // Устанавливает доступность полей формы
+  var setAvailableFormFields = function (formChildNodes, disabled) {
+    formChildNodes.forEach(function (node) {
+      node.disabled = disabled;
+    });
+  };
+
   window.functions = {
     getRandomValueRange: getRandomValueRange,
     shuffleArray: shuffleArray,
-    createNewElement: createNewElement
+    createNewElement: createNewElement,
+    setAvailableFormFields: setAvailableFormFields
   };
 })();

@@ -1,13 +1,6 @@
 'use strict';
 
 (function () {
-  // Устанавливает доступность полей формы
-  var setAvailableFormFields = function (formChildNodes, disabled) {
-    formChildNodes.forEach(function (node) {
-      node.disabled = disabled;
-    });
-  };
-
   // Заполняет поле адреса кординатами пина
   var setAddressFieldValue = function (leftCords, topCords) {
     var adressFieldElem = adFormElem.querySelector('#address');
@@ -16,7 +9,7 @@
   };
 
   // Устанавливает сласс доступности формы
-  var setFormDisabledClasses = function (flag) {
+  var setAdFormDisabledClasses = function (flag) {
     if (flag) {
       adFormElem.classList.add('ad-form--disabled');
     } else {
@@ -25,10 +18,9 @@
   };
 
   // Устанавливает доступность формы и ее полей
-  var setFormDisabled = function (flag) {
-    setAvailableFormFields(filterFormChildNodes, flag);
-    setAvailableFormFields(adFormChildNodes, flag);
-    setFormDisabledClasses(flag);
+  var setAdFormDisabled = function (flag) {
+    window.functions.setAvailableFormFields(adFormChildNodes, flag);
+    setAdFormDisabledClasses(flag);
   };
 
   // Навешиваем события на тип жилья
@@ -93,7 +85,7 @@
       window.mainPin.setMainPinToStartCords();
       window.map.setMapDisabledClasses(true);
       adFormElem.reset();
-      setFormDisabled(true);
+      setAdFormDisabled(true);
     };
 
     var onError = function (message) {
@@ -106,7 +98,6 @@
 
   var adFormElem = document.querySelector('.ad-form');
   var adFormChildNodes = document.querySelectorAll('.ad-form > *');
-  var filterFormChildNodes = document.querySelectorAll('.map__filters > *');
   var pricePerNightElem = document.querySelector('#price');
   var housingTypeElem = document.querySelector('#type');
   var timeInElem = document.querySelector('#timein');
@@ -127,11 +118,10 @@
   addRoomNumberEvent();
   addFormSabmitEvents();
 
-  setAvailableFormFields(filterFormChildNodes, true);
-  setAvailableFormFields(adFormChildNodes, true);
+  setAdFormDisabled(true);
 
   window.form = {
-    setFormDisabled: setFormDisabled,
+    setAdFormDisabled: setAdFormDisabled,
     setAddressFieldValue: setAddressFieldValue
   };
 })();
