@@ -83,11 +83,13 @@
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === ESC_KEY_CODE) {
         removePopupCard();
+        window.pins.removeActivePinClass();
       }
     });
 
     closePopupIcon.addEventListener('click', function () {
       removePopupCard();
+      window.pins.removeActivePinClass();
     });
   };
 

@@ -23,6 +23,7 @@
     ads = adsArray;
     ads.forEach(function (adObj, i) {
       adObj.id = i;
+      adObj.active = false;
       var mapPinElement = createMapPinElement(adObj);
       mapPinsFragment.appendChild(mapPinElement);
     });
@@ -38,37 +39,42 @@
     });
   };
 
-  // Подсвечивает активный пин и удаляет подсветку у предыдущего активного пина
-  var setActivePinClass = function (pinElem) {
+  // Удаляет подстветку у активного пина
+  var removeActivePinClass = function () {
     var selectedPinElem = mapPinsElem.querySelector('.map__pin.map__pin--active');
     if (selectedPinElem) {
       selectedPinElem.classList.remove('map__pin--active');
-      ads[selectedPinElem.id].selected = false;
+      ads[selectedPinElem.id].active = false;
     }
+  };
 
-    ads[pinElem.id].selected = true;
+  // Подсвечивает новый активный пин
+  var addActivePinClass = function (pinElem) {
     pinElem.classList.add('map__pin--active');
+    ads[pinElem.id].active = true;
   };
 
   // Навешиваем события на пины
   var addPinsEvent = function () {
     mapPinsElem.addEventListener('click', function (evt) {
-      var pinElem = evt.target.closest('.map__pin:not(.map__pin--main)');
+      var activePinElem = evt.target.closest('.map__pin:not(.map__pin--main)');
 
-      if (pinElem) {
-        setActivePinClass(pinElem);
-        window.popup.createPopupCard(ads[pinElem.id]);
+      if (activePinElem) {
+        removeActivePinClass();
+        addActivePinClass(activePinElem);
+        window.popup.createPopupCard(ads[activePinElem.id]);
       }
     });
   };
 
-  var mapPinsElem = document.querySelector('.map__pins');
+  var mapPinsElem = window.map.mapElem.querySelector('.map__pins');
   var mapPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var ads = [];
 
   addPinsEvent();
 
   window.pins = {
+    removeActivePinClass: removeActivePinClass,
     generateMapPins: generateMapPins,
     deleteMapPins: deleteMapPins
   };
