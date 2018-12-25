@@ -21,11 +21,6 @@
       mousedownEvt.preventDefault();
       var allowableOffset = 10;
 
-      startPinCords = {
-        left: parseInt(mapPinMain.style.left, 10),
-        top: parseInt(mapPinMain.style.top, 10)
-      };
-
       var startMouseCords = {
         x: mousedownEvt.clientX,
         y: mousedownEvt.clientY
@@ -99,7 +94,10 @@
     window.backend.getServerDataJSON(url, onSuccess, onError);
   };
   var mapPinMain = document.querySelector('.map__pin--main');
-  var startPinCords = {};
+  var startPinCords = {
+    left: parseInt(mapPinMain.style.left, 10),
+    top: parseInt(mapPinMain.style.top, 10)
+  };
 
   addMainPinEvent();
 
