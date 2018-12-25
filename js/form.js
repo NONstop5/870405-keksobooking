@@ -23,6 +23,16 @@
     setAdFormDisabledClasses(flag);
   };
 
+  // Возвращаем все к исходному состоянию
+  var setDefaults = function () {
+    window.popup.removePopupCard();
+    window.pins.deleteMapPins();
+    window.mainPin.setMainPinToStartCords();
+    window.map.setMapDisabledClasses(true);
+    adFormElem.reset();
+    setAdFormDisabled(true);
+  };
+
   // Навешиваем события на тип жилья
   var addHousingTypeEvent = function () {
     housingTypeElem.addEventListener('change', function (evt) {
@@ -66,11 +76,16 @@
     });
   };
 
-  // Навешиваем события на submit формы
-  var addFormSabmitEvents = function () {
+  // Навешиваем события на форму
+  var addFormEvents = function () {
     adFormElem.addEventListener('submit', function (evt) {
       evt.preventDefault();
       sendFormDataJSON();
+    });
+
+    adFormElem.addEventListener('reset', function (evt) {
+      evt.preventDefault();
+      setDefaults();
     });
   };
 
@@ -80,12 +95,7 @@
 
     var onSuccess = function () {
       window.messages.showSaccessMessage();
-      window.popup.removePopupCard();
-      window.pins.deleteMapPins();
-      window.mainPin.setMainPinToStartCords();
-      window.map.setMapDisabledClasses(true);
-      adFormElem.reset();
-      setAdFormDisabled(true);
+      setDefaults();
     };
 
     var onError = function (message) {
@@ -116,7 +126,7 @@
   addTimeInEvent();
   addTimeOutEvent();
   addRoomNumberEvent();
-  addFormSabmitEvents();
+  addFormEvents();
 
   setAdFormDisabled(true);
 
