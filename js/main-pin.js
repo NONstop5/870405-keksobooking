@@ -61,7 +61,9 @@
         };
 
         if (Math.abs(generalOffset.x) > allowableOffset || Math.abs(generalOffset.y) > allowableOffset) {
-          getRemoteDataJSON();
+          if (window.map.mapElem.classList[1] === 'map--faded') {
+            getRemoteDataJSON();
+          }
         } else {
           setMainPinToStartCords();
         }
@@ -81,9 +83,11 @@
     var url = 'https://js.dump.academy/keksobooking/data';
 
     var onSuccess = function (data) {
-      window.pins.generateMapPins(data);
+      window.map.originalAdsArray = data.slice();
+      window.pins.generateMapPins(data.slice(5));
       window.map.setMapDisabledClasses(false);
-      window.form.setFormDisabled(false);
+      window.filter.setFilterDisabled(false);
+      window.form.setAdFormDisabled(false);
       window.form.setAddressFieldValue(parseInt(mapPinMain.style.left, 10), parseInt(mapPinMain.style.top, 10));
     };
 

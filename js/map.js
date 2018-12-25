@@ -11,8 +11,10 @@
   };
 
   var mapElem = document.querySelector('.map');
+  var originalAdsArray = [];
 
   window.map = {
+    originalAdsArray: originalAdsArray,
     mapElem: mapElem,
     setMapDisabledClasses: setMapDisabledClasses
   };
