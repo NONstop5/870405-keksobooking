@@ -3,6 +3,8 @@
 (function () {
 
   var ESC_KEY_CODE = 27;
+  var PHOTO_WIDTH = 45;
+  var PHOTO_HEIGHT = 40;
 
   // Функция содает список фич в объявлении
   var generateOfferFeaturesElem = function (futuresArray) {
@@ -21,8 +23,8 @@
     photosArray.forEach(function (value) {
       var photoElem = window.functions.createNewElement('img', 'popup__photo', '');
       photoElem.src = value;
-      photoElem.width = 45;
-      photoElem.height = 40;
+      photoElem.width = PHOTO_WIDTH;
+      photoElem.height = PHOTO_HEIGHT;
       photoElem.alt = 'Фотография жилья';
       photoFragment.appendChild(photoElem);
     });
@@ -51,7 +53,7 @@
     avatarImg.src = adObj.author.avatar;
     offerTitle.textContent = adObj.offer.title;
     offerAddress.textContent = adObj.offer.address;
-    offerPrice.innerHTML = adObj.offer.price + '&#x20bd;<span>/ночь</span>';
+    offerPrice.textContent = adObj.offer.price + ' ₽/ночь';
     offerType.textContent = offerTypeRusValues[adObj.offer.type];
     offerCapacity.textContent = adObj.offer.rooms + ' комнаты для ' + adObj.offer.guests + ' гостей';
     offerTime.textContent = 'Заезд после ' + adObj.offer.checkin + ', выезд до ' + adObj.offer.checkout;

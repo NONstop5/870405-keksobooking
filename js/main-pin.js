@@ -2,6 +2,7 @@
 
 (function () {
 
+  var PINS_COUNT = 5;
   var PIN_MAIN_SIZE = 65;
   var PinArowCord = {
     MIN_X: 0,
@@ -59,6 +60,7 @@
           if (window.map.mapElem.classList[1] === 'map--faded') {
             getRemoteDataJSON();
           }
+          window.form.setAddressFieldValue(parseInt(mapPinMain.style.left, 10), parseInt(mapPinMain.style.top, 10));
         } else {
           setMainPinToStartCords();
         }
@@ -79,7 +81,7 @@
 
     var onSuccess = function (data) {
       window.map.originalAdsArray = data.slice();
-      window.pins.generateMapPins(data.slice(5));
+      window.pins.generateMapPins(data.slice(PINS_COUNT));
       window.map.setMapDisabledClasses(false);
       window.filter.setFilterDisabled(false);
       window.form.setAdFormDisabled(false);
