@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+  var HousingTypeMinPrice = {
+    BUNGALO: 0,
+    FLAT: 1000,
+    HOUSE: 5000,
+    PALACE: 10000
+  };
+
   // Заполняет поле адреса кординатами пина
   var setAddressFieldValue = function (leftCords, topCords) {
     var adressFieldElem = adFormElem.querySelector('#address');
@@ -37,8 +44,8 @@
   var addHousingTypeEvent = function () {
     housingTypeElem.addEventListener('change', function (evt) {
       var selectedValue = evt.target.value;
-      pricePerNightElem.min = housingTypeMinPrice[selectedValue];
-      pricePerNightElem.placeholder = housingTypeMinPrice[selectedValue];
+      pricePerNightElem.min = HousingTypeMinPrice[selectedValue];
+      pricePerNightElem.placeholder = HousingTypeMinPrice[selectedValue];
     });
   };
 
@@ -83,15 +90,14 @@
       sendFormDataJSON();
     });
 
-    adFormElem.addEventListener('reset', function (evt) {
-      evt.preventDefault();
+    adFormElem.addEventListener('reset', function () {
       setDefaults();
     });
   };
 
   // Отправка данных в формате JSON на сервер
   var sendFormDataJSON = function () {
-    var url = 'https://js.dump.academy/keksobooking';
+    var url = 'https://js.dump.academy/keksobooking1';
 
     var onSuccess = function () {
       window.messages.showSaccessMessage();
@@ -114,13 +120,6 @@
   var timeOutElem = document.querySelector('#timeout');
   var roomNumberElem = document.querySelector('#room_number');
   var capacityElem = document.querySelector('#capacity');
-
-  var housingTypeMinPrice = {
-    bungalo: 0,
-    flat: 1000,
-    house: 5000,
-    palace: 10000
-  };
 
   addHousingTypeEvent();
   addTimeInEvent();
