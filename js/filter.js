@@ -8,26 +8,52 @@
   };
 
   // Навешиваем события на фильтр выпадающих списков
-  var addFormFilterEvents = function () {
+  /*
+  После этой проверки доделаю !
+
+  var addFormOptionsFilterEvents = function () {
     formFilterElem.addEventListener('click', function (evt) {
       var tagName = evt.target.tagName;
+      var priceLimits = {
+        low: 10000,
+        high: 50000
+      };
 
       if (tagName === 'OPTION') {
-        console.log(evt.target.parentNode.name + ' ' + evt.target.value);
+        var selectedOptions = [];
+        var formFilterSelectNodes = formFilterElem.querySelectorAll('select');
+
+        formFilterSelectNodes.forEach(function (curNode) {
+          var propName = curNode.name.substr(curNode.name.indexOf('-') + 1);
+          var propValue = curNode.options[curNode.selectedIndex].value;
+          var obj = {};
+          obj[propName] = propValue;
+          selectedOptions.push(obj);
+        });
+        selectedOptions = selectedOptions.filter(function (item) {
+          return item !== 'any';
+        });
+
+        var filteredAdsArray = window.map.originalAdsArray.filter(function (ad) {
+          return selectedOptions.every(function (optionName) {
+
+          });
+        });
       }
+
     });
   };
-
+*/
   // Навешиваем события на фильтр фичей
   var addFormFeaturesFilterEvents = function () {
     formFilterfeaturesElem.addEventListener('click', function (evt) {
       var tagName = evt.target.tagName;
       var name = evt.target.name;
-      var originalAdsArray = window.map.originalAdsArray;
-      var formFilterfeaturesNodes = formFilterfeaturesElem.querySelectorAll('input:checked');
 
       if (tagName === 'INPUT') {
         var checkedFeatures = [];
+        var formFilterfeaturesNodes = formFilterfeaturesElem.querySelectorAll('input:checked');
+
         formFilterfeaturesNodes.forEach(function (curNode) {
           checkedFeatures.push(curNode.value);
         });
@@ -40,8 +66,8 @@
           });
         };
 
-        var filteredAdsArray = originalAdsArray.filter(compareFeatureValues);
-        console.log(filteredAdsArray);
+        var filteredAdsArray = window.map.originalAdsArray.filter(compareFeatureValues);
+
         window.popup.removePopupCard();
         window.pins.deleteMapPins();
         window.pins.generateMapPins(filteredAdsArray.slice(0, 5));
@@ -54,7 +80,7 @@
   var formFilterChildNodes = window.map.mapElem.querySelectorAll('.map__filters > *');
 
   setFilterDisabled(true);
-  addFormFilterEvents();
+  // addFormOptionsFilterEvents();
   addFormFeaturesFilterEvents();
 
   window.filter = {
