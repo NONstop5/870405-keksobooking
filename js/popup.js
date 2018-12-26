@@ -52,7 +52,7 @@
     offerTitle.textContent = adObj.offer.title;
     offerAddress.textContent = adObj.offer.address;
     offerPrice.innerHTML = adObj.offer.price + '&#x20bd;<span>/ночь</span>';
-    offerType.textContent = window.data.offerTypeRusValues[adObj.offer.type];
+    offerType.textContent = offerTypeRusValues[adObj.offer.type];
     offerCapacity.textContent = adObj.offer.rooms + ' комнаты для ' + adObj.offer.guests + ' гостей';
     offerTime.textContent = 'Заезд после ' + adObj.offer.checkin + ', выезд до ' + adObj.offer.checkout;
 
@@ -83,15 +83,25 @@
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === ESC_KEY_CODE) {
         removePopupCard();
+        window.pins.removeActivePinClass();
       }
     });
 
     closePopupIcon.addEventListener('click', function () {
       removePopupCard();
+      window.pins.removeActivePinClass();
     });
   };
 
+  var offerTypeRusValues = {
+    palace: 'Дворец',
+    flat: 'Квартира',
+    house: 'Дом',
+    bungalo: 'Бунгало'
+  };
+
   window.popup = {
-    createPopupCard: createPopupCard
+    createPopupCard: createPopupCard,
+    removePopupCard: removePopupCard
   };
 })();

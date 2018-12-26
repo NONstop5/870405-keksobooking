@@ -2,13 +2,17 @@
 
 (function () {
 
-  var startWork = function () {
-    var leftCords = parseInt(mapPinMain.style.left, 10);
-    var topCords = parseInt(mapPinMain.style.top, 10);
+  var PIN_MAIN_SIZE = 65;
+  var PinArowCord = {
+    MIN_X: 0,
+    MAX_X: 1200,
+    MIN_Y: 130,
+    MAX_Y: 630
+  };
 
-    window.data.getRemoteData();
-    window.form.activateForm();
-    window.form.setAddressFieldValue(leftCords, topCords);
+  var setMainPinToStartCords = function () {
+    mapPinMain.style.left = startPinCords.left + 'px';
+    mapPinMain.style.top = startPinCords.top + 'px';
   };
 
   // Навешиваем события на главный пин
@@ -16,11 +20,6 @@
     mapPinMain.addEventListener('mousedown', function (mousedownEvt) {
       mousedownEvt.preventDefault();
       var allowableOffset = 10;
-
-      var startPinCords = {
-        left: parseInt(mapPinMain.style.left, 10),
-        top: parseInt(mapPinMain.style.top, 10)
-      };
 
       var startMouseCords = {
         x: mousedownEvt.clientX,
@@ -34,30 +33,34 @@
           x: startMouseCords.x - mousemoveEvt.clientX,
           y: startMouseCords.y - mousemoveEvt.clientY
         };
+        var newCords = {
+          left: mapPinMain.offsetLeft - offsetMouseCords.x,
+          top: mapPinMain.offsetTop - offsetMouseCords.y
+        };
 
-        var newLeftCords = mapPinMain.offsetLeft - offsetMouseCords.x;
-        var newTopCords = mapPinMain.offsetTop - offsetMouseCords.y;
-
-        if (newTopCords > PIN_ARROW_MIN_CORDS_Y - PIN_MAIN_SIZE && newTopCords < PIN_ARROW_MAX_CORDS_Y && newLeftCords > PIN_ARROW_MIN_CORDS_X && newLeftCords < PIN_ARROW_MAX_CORDS_X - PIN_MAIN_SIZE) {
+        if (newCords.top > PinArowCord.MIN_Y - PIN_MAIN_SIZE && newCords.top < PinArowCord.MAX_Y && newCords.left > PinArowCord.MIN_X && newCords.left < PinArowCord.MAX_X - PIN_MAIN_SIZE) {
           startMouseCords.x = mousemoveEvt.clientX;
           startMouseCords.y = mousemoveEvt.clientY;
 
-          mapPinMain.style.left = newLeftCords + 'px';
-          mapPinMain.style.top = newTopCords + 'px';
+          mapPinMain.style.left = newCords.left + 'px';
+          mapPinMain.style.top = newCords.top + 'px';
         }
       };
 
       var onMouseUp = function (mouseupEvt) {
         mouseupEvt.preventDefault();
 
-        var generalOffsetX = mapPinMain.offsetLeft - startPinCords.left;
-        var generalOffsetY = mapPinMain.offsetTop - startPinCords.top;
+        var generalOffset = {
+          x: mapPinMain.offsetLeft - startPinCords.left,
+          y: mapPinMain.offsetTop - startPinCords.top
+        };
 
-        if (Math.abs(generalOffsetX) > allowableOffset || Math.abs(generalOffsetY) > allowableOffset) {
-          startWork();
+        if (Math.abs(generalOffset.x) > allowableOffset || Math.abs(generalOffset.y) > allowableOffset) {
+          if (window.map.mapElem.classList[1] === 'map--faded') {
+            getRemoteDataJSON();
+          }
         } else {
-          mapPinMain.style.left = startPinCords.left + 'px';
-          mapPinMain.style.top = startPinCords.top + 'px';
+          setMainPinToStartCords();
         }
 
         document.removeEventListener('mousemove', onMouseMove);
@@ -70,18 +73,36 @@
     });
   };
 
-  var mapPinMain = document.querySelector('.map__pin--main');
+  // Загружаем данные с сервера
+  var getRemoteDataJSON = function () {
+    var url = 'https://js.dump.academy/keksobooking/data';
 
-  var PIN_MAIN_SIZE = 65;
-  var PIN_ARROW_MIN_CORDS_X = 0;
-  var PIN_ARROW_MAX_CORDS_X = 1200;
-  var PIN_ARROW_MIN_CORDS_Y = 130;
-  var PIN_ARROW_MAX_CORDS_Y = 630;
+    var onSuccess = function (data) {
+      window.map.originalAdsArray = data.slice();
+      window.pins.generateMapPins(data.slice(5));
+      window.map.setMapDisabledClasses(false);
+      window.filter.setFilterDisabled(false);
+      window.form.setAdFormDisabled(false);
+      window.form.setAddressFieldValue(parseInt(mapPinMain.style.left, 10), parseInt(mapPinMain.style.top, 10));
+    };
+
+    var onError = function (message) {
+      window.messages.showErrorMessage(message);
+      setMainPinToStartCords();
+    };
+
+    window.backend.getServerDataJSON(url, onSuccess, onError);
+  };
+  var mapPinMain = document.querySelector('.map__pin--main');
+  var startPinCords = {
+    left: parseInt(mapPinMain.style.left, 10),
+    top: parseInt(mapPinMain.style.top, 10)
+  };
 
   addMainPinEvent();
 
   window.mainPin = {
-    startWork: startWork
+    setMainPinToStartCords: setMainPinToStartCords
   };
 
 })();

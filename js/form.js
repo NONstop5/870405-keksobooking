@@ -1,42 +1,44 @@
 'use strict';
 
 (function () {
-  // Функция устанавливает доступность полей формы
-  var setAvailableFormFields = function (formChildNodes, disabled) {
-    formChildNodes.forEach(function (node) {
-      node.disabled = disabled;
-    });
-  };
-
-  // Функция заполняет поле адреса кординатами пина
+  // Заполняет поле адреса кординатами пина
   var setAddressFieldValue = function (leftCords, topCords) {
     var adressFieldElem = adFormElem.querySelector('#address');
     var pinCords = leftCords + ', ' + topCords;
     adressFieldElem.value = pinCords;
   };
 
-  var setAdFormDisabled = function (flag) {
+  // Устанавливает сласс доступности формы
+  var setAdFormDisabledClasses = function (flag) {
     if (flag) {
-      window.map.mapElem.classList.add('map--faded');
       adFormElem.classList.add('ad-form--disabled');
     } else {
-      window.map.mapElem.classList.remove('map--faded');
       adFormElem.classList.remove('ad-form--disabled');
     }
   };
 
-  var activateForm = function () {
-    setAvailableFormFields(filterFormChildNodes, false);
-    setAvailableFormFields(adFormChildNodes, false);
-    setAdFormDisabled(false);
+  // Устанавливает доступность формы и ее полей
+  var setAdFormDisabled = function (flag) {
+    window.functions.setAvailableFormFields(adFormChildNodes, flag);
+    setAdFormDisabledClasses(flag);
+  };
+
+  // Возвращаем все к исходному состоянию
+  var setDefaults = function () {
+    window.popup.removePopupCard();
+    window.pins.deleteMapPins();
+    window.mainPin.setMainPinToStartCords();
+    window.map.setMapDisabledClasses(true);
+    adFormElem.reset();
+    setAdFormDisabled(true);
   };
 
   // Навешиваем события на тип жилья
   var addHousingTypeEvent = function () {
     housingTypeElem.addEventListener('change', function (evt) {
       var selectedValue = evt.target.value;
-      pricePerNightElem.min = window.data.housingTypeMinPrice[selectedValue];
-      pricePerNightElem.placeholder = window.data.housingTypeMinPrice[selectedValue];
+      pricePerNightElem.min = housingTypeMinPrice[selectedValue];
+      pricePerNightElem.placeholder = housingTypeMinPrice[selectedValue];
     });
   };
 
@@ -74,9 +76,38 @@
     });
   };
 
-  var filterFormChildNodes = document.querySelectorAll('.map__filters > *');
-  var adFormChildNodes = document.querySelectorAll('.ad-form > *');
+  // Навешиваем события на форму
+  var addFormEvents = function () {
+    adFormElem.addEventListener('submit', function (evt) {
+      evt.preventDefault();
+      sendFormDataJSON();
+    });
+
+    adFormElem.addEventListener('reset', function (evt) {
+      evt.preventDefault();
+      setDefaults();
+    });
+  };
+
+  // Отправка данных в формате JSON на сервер
+  var sendFormDataJSON = function () {
+    var url = 'https://js.dump.academy/keksobooking';
+
+    var onSuccess = function () {
+      window.messages.showSaccessMessage();
+      setDefaults();
+    };
+
+    var onError = function (message) {
+      window.messages.showErrorMessage(message);
+    };
+
+    window.backend.sendServerDataJSON(url, new FormData(adFormElem), onSuccess, onError);
+
+  };
+
   var adFormElem = document.querySelector('.ad-form');
+  var adFormChildNodes = document.querySelectorAll('.ad-form > *');
   var pricePerNightElem = document.querySelector('#price');
   var housingTypeElem = document.querySelector('#type');
   var timeInElem = document.querySelector('#timein');
@@ -84,16 +115,23 @@
   var roomNumberElem = document.querySelector('#room_number');
   var capacityElem = document.querySelector('#capacity');
 
+  var housingTypeMinPrice = {
+    bungalo: 0,
+    flat: 1000,
+    house: 5000,
+    palace: 10000
+  };
+
   addHousingTypeEvent();
   addTimeInEvent();
   addTimeOutEvent();
   addRoomNumberEvent();
+  addFormEvents();
 
-  setAvailableFormFields(filterFormChildNodes, true);
-  setAvailableFormFields(adFormChildNodes, true);
+  setAdFormDisabled(true);
 
   window.form = {
-    activateForm: activateForm,
+    setAdFormDisabled: setAdFormDisabled,
     setAddressFieldValue: setAddressFieldValue
   };
 })();
